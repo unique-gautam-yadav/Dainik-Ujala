@@ -25,10 +25,10 @@ class MyThemes {
     primarySwatch: Colors.deepOrange,
     shadowColor: Colors.deepOrange.shade200,
     fontFamily: GoogleFonts.lato().toString(),
-    canvasColor: const Color.fromARGB(255, 240, 212, 203),
+    canvasColor: Colors.white,
     cardColor: Colors.deepOrange.shade50.withOpacity(.6),
     colorScheme: ColorScheme.light(secondary: Colors.deepOrange.shade200),
     bottomSheetTheme:
-        const BottomSheetThemeData(backgroundColor: Color.fromARGB(255, 240, 212, 203), elevation: 0),
+        const BottomSheetThemeData(backgroundColor: Colors.white, elevation: 0),
   );
 }

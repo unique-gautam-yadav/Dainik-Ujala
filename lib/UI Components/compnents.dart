@@ -3,6 +3,7 @@
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:dainik_ujala/Views/detial_page.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PopUpMenu extends StatelessWidget {
   const PopUpMenu({
@@ -15,24 +16,13 @@ class PopUpMenu extends StatelessWidget {
       return [
         const PopupMenuItem<int>(
           value: 0,
-          child: Text("My Account"),
-        ),
-        const PopupMenuItem<int>(
-          value: 1,
-          child: Text("Settings"),
-        ),
-        const PopupMenuItem<int>(
-          value: 2,
-          child: Text("Logout"),
+          child: Text("Privacy Policy"),
         ),
       ];
-    }, onSelected: (value) {
+    }, onSelected: (value) async {
       if (value == 0) {
-        print("My account menu is selected.");
-      } else if (value == 1) {
-        print("Settings menu is selected.");
-      } else if (value == 2) {
-        print("Logout menu is selected.");
+        var url = Uri.parse("https://sites.google.com/view/dainik-ujala/home/");
+        await launchUrl(url);
       }
     });
   }

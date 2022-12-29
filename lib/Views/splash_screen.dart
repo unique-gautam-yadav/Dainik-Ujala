@@ -1,6 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dainik_ujala/Views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+
+import 'no_internet.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -12,12 +17,23 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 3))
-            .then((value) => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                )))
+    Future.delayed(const Duration(seconds: 3)).then((value) async {
+      ConnectivityResult res = await Connectivity().checkConnectivity();
+      if (res == ConnectivityResult.mobile ||
+          res == ConnectivityResult.mobile ||
+          res == ConnectivityResult.ethernet) {
+        return Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomePage(),
+            ));
+      } else {
+        return Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const ConnectionLostScreen()));
+      }
+    })
         //
         ;
     super.initState();

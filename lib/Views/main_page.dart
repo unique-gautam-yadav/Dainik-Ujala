@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dainik_ujala/Views/secondary_tab.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,26 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     _tabController = TabController(length: 5, vsync: this);
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.mobile ||
+          result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.ethernet) {
+        ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Back Online!!")));
+      } else {
+        ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+            content: const Text("You are offline"),
+            backgroundColor: Theme.of(context).hoverColor,
+            leading: Icon(
+              Icons.info,
+              color: Theme.of(context).errorColor,
+            ),
+            actions: [
+              TextButton(onPressed: () {}, child: const Text("Retry"))
+            ]));
+      }
+    });
     super.initState();
   }
 
@@ -38,6 +59,7 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
+        actions: const [PopUpMenu()],
         title:
             SizedBox(height: 55, child: Image.asset("assets/images/logo.png")),
         bottom: TabBar(
