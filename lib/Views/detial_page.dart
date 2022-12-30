@@ -5,13 +5,13 @@ import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
 class DetailPage extends StatefulWidget {
-  late DateTime published;
   DetailPage({
     super.key,
     required this.data,
   }) {
     published = DateTime.parse(data.publishedAt);
   }
+  late DateTime published;
   final NewsArtical data;
 
   @override
@@ -27,7 +27,7 @@ class _DetailPageState extends State<DetailPage> {
       await Share.share(url,
           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
     } catch (e) {
-      print(e);
+      // print(e);
     }
   }
 

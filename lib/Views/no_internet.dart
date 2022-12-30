@@ -13,8 +13,8 @@ class _ConnectionLostScreenState extends State<ConnectionLostScreen> {
   @override
   void initState() {
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.wifi ||
+      if (result == ConnectivityResult.wifi ||
+          result == ConnectivityResult.mobile ||
           result == ConnectivityResult.ethernet) {
         Navigator.pushReplacement(
             context,

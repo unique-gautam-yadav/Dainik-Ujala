@@ -28,7 +28,7 @@ class FetchData {
 
       for (int i = 0; i < data.length; i++) {
         if (data[i] == null) {
-          print("Something Skipped");
+          // print("Something Skipped");
           continue;
         } else {
           NewsArtical item = NewsArtical(
@@ -44,9 +44,9 @@ class FetchData {
           dataToBeSent.add(item);
         }
       }
-      print("$page  ${dataToBeSent.length}    Data Fetched");
+      // print("$page  ${dataToBeSent.length}    Data Fetched");
     } catch (e) {
-      print(e);
+      // print(e);
     }
     return dataToBeSent;
   }

@@ -3,6 +3,7 @@
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:dainik_ujala/Views/detial_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PopUpMenu extends StatelessWidget {
@@ -69,9 +70,9 @@ class RoundedImage extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
+                  child: HtmlWidget(
                     artical.title,
-                    style: Theme.of(context)
+                    textStyle: Theme.of(context)
                         .textTheme
                         .bodyText2!
                         .copyWith(color: Colors.white),
@@ -148,7 +149,7 @@ class Article extends StatelessWidget {
                     ),
                     const SizedBox(width: 20),
                     Expanded(
-                      child: Text(data.title),
+                      child: HtmlWidget(data.title),
                     )
                   ],
                 ),

@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3)).then((value) async {
       ConnectivityResult res = await Connectivity().checkConnectivity();
       if (res == ConnectivityResult.mobile ||
-          res == ConnectivityResult.mobile ||
+          res == ConnectivityResult.wifi ||
           res == ConnectivityResult.ethernet) {
         return Navigator.pushReplacement(
             context,
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 builder: (context) => const ConnectionLostScreen()));
       }
     })
-        //
+          //
         ;
     super.initState();
   }
