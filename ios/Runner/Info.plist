@@ -47,5 +47,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>dainik_ujala</key>
+				<string>https://dainikujala.live/</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>logrckt</string>
+				</array>
+			</dict>
+		</array>
 </dict>
+
 </plist>
