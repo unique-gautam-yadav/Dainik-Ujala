@@ -69,9 +69,15 @@ class _DetailPageState extends State<DetailPage> {
         backgroundColor: Theme.of(context).brightness == Brightness.dark
             ? const Color.fromARGB(255, 20, 27, 30)
             : Theme.of(context).appBarTheme.backgroundColor,
-        title: Text(
-          widget.data.title,
-          style: Theme.of(context).textTheme.bodyText1,
+        title: SizedBox(
+          height: (Theme.of(context).textTheme.bodyText1?.fontSize ?? 0) * 1.5,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: HtmlWidget(
+              widget.data.title,
+              textStyle: Theme.of(context).textTheme.bodyText1,
+            ),
+          ),
         ),
       ),
       body: Container(
@@ -101,8 +107,8 @@ class _DetailPageState extends State<DetailPage> {
             Padding(
               padding: const EdgeInsets.only(
                   top: 10.0, bottom: 0, left: 8, right: 8),
-              child: Text(widget.data.title,
-                  style: Theme.of(context).textTheme.headline6),
+              child: HtmlWidget(widget.data.title,
+                  textStyle: Theme.of(context).textTheme.headline6),
             ),
             const Divider(),
             Padding(

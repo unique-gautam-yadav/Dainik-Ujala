@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:dainik_ujala/Views/main_page.dart';
+import 'package:dainik_ujala/Views/redirected_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -8,8 +9,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'no_internet.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
-
+  const SplashScreen({super.key, this.initialURI});
+  final Uri? initialURI;
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -22,11 +23,20 @@ class _SplashScreenState extends State<SplashScreen> {
       if (res == ConnectivityResult.mobile ||
           res == ConnectivityResult.wifi ||
           res == ConnectivityResult.ethernet) {
-        return Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ));
+        if (widget.initialURI == null) {
+          return Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ));
+        } else {
+          return Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    RedirectedPage(initialURI: widget.initialURI),
+              ));
+        }
       } else {
         return Navigator.pushReplacement(
             context,
@@ -34,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 builder: (context) => const ConnectionLostScreen()));
       }
     })
-          //
+        //
         ;
     super.initState();
   }
