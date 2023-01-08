@@ -16,16 +16,6 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isDarkTheme = true;
-
-  updateThemeDetails() async {
-    Future.delayed(const Duration(seconds: 1)).then((value) {
-      setState(() {
-        isDarkTheme =
-            MediaQuery.of(context).platformBrightness == Brightness.dark;
-      });
-    });
-  }
 
   @override
   void initState() {

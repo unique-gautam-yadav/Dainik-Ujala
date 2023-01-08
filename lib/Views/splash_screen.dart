@@ -23,7 +23,8 @@ class _SplashScreenState extends State<SplashScreen> {
       if (res == ConnectivityResult.mobile ||
           res == ConnectivityResult.wifi ||
           res == ConnectivityResult.ethernet) {
-        if (widget.initialURI == null) {
+        if (widget.initialURI == null ||
+            widget.initialURI.toString().split("/").length < 3) {
           return Navigator.pushReplacement(
               context,
               MaterialPageRoute(

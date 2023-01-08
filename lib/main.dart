@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dainik_ujala/UI%20Components/themes.dart';
+import 'package:dainik_ujala/Views/main_page.dart';
 import 'package:dainik_ujala/Views/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,8 +43,17 @@ class MainScreenState extends State<MainScreen> {
         // 3
         final initialURI = await getInitialUri();
         // 4
+        if (initialURI.toString().toLowerCase() ==
+            "https://dainikujala.live/" && initialURI.toString().toLowerCase() == "https://dainikujala.live" ) {
+          // ignore: use_build_context_synchronously
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ));
+        }
         if (initialURI != null) {
-          debugPrint("Initial URI received ${initialURI.toString().split("/")[3]}");
+          debugPrint("Initial URI received ${initialURI.toString()}");
           if (!mounted) {
             return;
           }
@@ -68,7 +78,11 @@ class MainScreenState extends State<MainScreen> {
 
   goAway(Uri? uri) {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => SplashScreen(initialURI: uri,)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => SplashScreen(
+                  initialURI: uri,
+                )));
   }
 
   @override

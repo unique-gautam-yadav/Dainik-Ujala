@@ -1,9 +1,11 @@
 import 'package:dainik_ujala/Backend/api.dart';
 import 'package:dainik_ujala/Views/detial_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 import '../Backend/models.dart';
+import 'main_page.dart';
 
 class RedirectedPage extends StatefulWidget {
   const RedirectedPage({super.key, this.initialURI});
@@ -51,8 +53,47 @@ class _RedirectedPageState extends State<RedirectedPage> {
       body: Center(
           child: !notFound
               ? const SpinKitRotatingCircle(color: Colors.deepOrange, size: 75)
-              : Text("Page not found !!",
-                  style: Theme.of(context).textTheme.bodyMedium)),
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Page not found !!",
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                              fontWeight: FontWeight.w100,
+                              fontSize: 40,
+                            )),
+                    MaterialButton(
+                      color: const Color(0xFF6371AA),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50)),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const HomePage(),
+                            ));
+                      },
+                      child: SizedBox(
+                        width: 120,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "go home".toUpperCase(),
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                            const SizedBox(width: 10),
+                            const Icon(
+                              CupertinoIcons.home,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
     );
   }
 }
