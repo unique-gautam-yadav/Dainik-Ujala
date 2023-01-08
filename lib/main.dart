@@ -43,7 +43,7 @@ class MainScreenState extends State<MainScreen> {
         final initialURI = await getInitialUri();
         // 4
         if (initialURI != null) {
-          debugPrint("Initial URI received $initialURI");
+          debugPrint("Initial URI received ${initialURI.toString().split("/")[3]}");
           if (!mounted) {
             return;
           }
@@ -68,7 +68,7 @@ class MainScreenState extends State<MainScreen> {
 
   goAway(Uri? uri) {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const SplashScreen()));
+        context, MaterialPageRoute(builder: (context) => SplashScreen(initialURI: uri,)));
   }
 
   @override

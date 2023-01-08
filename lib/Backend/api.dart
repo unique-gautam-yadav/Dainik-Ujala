@@ -8,27 +8,32 @@ class FetchData {
   // ?q=tesla&from=2022-11-21&sortBy=publishedAt&apiKey=
 
   static Future<Iterable<NewsArtical>> callApi(
-      {required int page, category = 0}) async {
+      {int page = 1, category = 0, String? slug}) async {
     List<NewsArtical> dataToBeSent = <NewsArtical>[];
     try {
       String url;
-      if (category == 0) {
+      if (category == 0 && page > 0 && slug == null) {
         url = "$api?page=$page";
       } else {
-        url = "$api?categories=$category&page=$page";
+        if (slug == null && page != 0) {
+          url = "$api?categories=$category&page=$page";
+        } else {
+          url = "$api?slug=$slug";
+        }
       }
+      print(url);
       final response = await http.get(Uri.parse(url));
 
       final decodedData = jsonDecode(response.body);
 
       // var newsData = decodedData["articles"];
-      // print(decodedData);
+      print(decodedData);
 
       List<dynamic> data = List.from(decodedData);
 
       for (int i = 0; i < data.length; i++) {
         if (data[i] == null) {
-          // print("Something Skipped");
+          print("Something Skipped");
           continue;
         } else {
           NewsArtical item = NewsArtical(
@@ -44,9 +49,9 @@ class FetchData {
           dataToBeSent.add(item);
         }
       }
-      // print("$page  ${dataToBeSent.length}    Data Fetched");
+      print("$page  ${dataToBeSent.length}    Data Fetched");
     } catch (e) {
-      // print(e);
+      print(e.toString());
     }
     return dataToBeSent;
   }

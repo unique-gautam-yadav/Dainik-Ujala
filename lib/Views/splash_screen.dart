@@ -18,7 +18,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 3)).then((value) async {
+    Future.delayed(const Duration(milliseconds: 500)).then((value) async {
       ConnectivityResult res = await Connectivity().checkConnectivity();
       if (res == ConnectivityResult.mobile ||
           res == ConnectivityResult.wifi ||
