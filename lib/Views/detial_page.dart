@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
   DetailPage({
@@ -31,35 +34,15 @@ class _DetailPageState extends State<DetailPage> {
     }
   }
 
+  Future<bool> _handleUrlTap(String u) async {
+    Uri url = Uri.parse(u);
+
+    return await launchUrl(url);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Container(
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(color: Theme.of(context).backgroundColor),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(DateFormat.yMEd().add_jms().format(widget.published)),
-          )),
-      // bottomSheet: ButtonBar(alignment: MainAxisAlignment.center, children: [
-      //   ElevatedButton(
-      //     style: ButtonStyle(
-      //       backgroundColor:
-      //           MaterialStateProperty.all(Theme.of(context).primaryColor),
-      //       padding: MaterialStateProperty.all(const EdgeInsets.only(
-      //           left: 30, right: 30, top: 10, bottom: 10)),
-      //       shape: MaterialStateProperty.all(const StadiumBorder()),
-      //     ),
-      //     onPressed: () {
-      //       Uri uri = Uri.parse(data.url);
-      //       launchUrl(uri);
-      //     },
-      //     child: const Text(
-      //       "See full article.",
-      //       style: TextStyle(color: Colors.white),
-      //     ),
-      //   )
-      // ]),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             _handleShare(widget.data.url, widget.data.title);
@@ -80,44 +63,85 @@ class _DetailPageState extends State<DetailPage> {
           ),
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          opacity: .25,
-          image: AssetImage("assets/images/logo.png"),
-        )),
-        child: SingleChildScrollView(
-            child: Column(
-          children: [
-            Hero(
-                tag: Key("News__${widget.data.id.toString()}"),
-                child: Image.network(widget.data.urlToImage)
-
-                // Container(
-                //     height: MediaQuery.of(context).size.width * 0.67,
-                //     width: MediaQuery.of(context).size.width,
-                //     decoration: BoxDecoration(
-                //         borderRadius: BorderRadius.circular(8),
-                //         color: Theme.of(context).backgroundColor,
-                //         image: DecorationImage(
-                //           image: NetworkImage(data.urlToImage),
-                //           fit: BoxFit.cover,
-                //         ))),
-                ),
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: 10.0, bottom: 0, left: 8, right: 8),
-              child: HtmlWidget(widget.data.title,
-                  textStyle: Theme.of(context).textTheme.headline6),
+      body: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              decoration: const BoxDecoration(
+                  image: DecorationImage(
+                opacity: .25,
+                image: AssetImage("assets/images/logo.png"),
+              )),
+              child: SingleChildScrollView(
+                  child: Column(
+                children: [
+                  Hero(
+                      tag: Key("News__${widget.data.id.toString()}"),
+                      child: Image.network(widget.data.urlToImage)),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10.0, bottom: 0, left: 8, right: 8),
+                    child: HtmlWidget(widget.data.title,
+                        textStyle: Theme.of(context).textTheme.headline6),
+                  ),
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 0, left: 8, right: 8, bottom: 80),
+                    child: HtmlWidget(
+                      widget.data.content,
+                      onTapUrl: (url) {
+                        return _handleUrlTap(url);
+                      },
+                    ),
+                  )
+                ],
+              )),
             ),
-            const Divider(),
-            Padding(
-              padding:
-                  const EdgeInsets.only(top: 0, left: 8, right: 8, bottom: 80),
-              child: HtmlWidget(widget.data.content),
-            )
-          ],
-        )),
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).backgroundColor,
+                  borderRadius:
+                      const BorderRadius.only(topRight: Radius.circular(30)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).backgroundColor,
+                      offset: const Offset(3, 0),
+                      blurRadius: 10,
+                    ),
+                    BoxShadow(
+                      color: Theme.of(context).backgroundColor,
+                      offset: const Offset(0, 3),
+                      blurRadius: 10,
+                    ),
+                    BoxShadow(
+                      color: Theme.of(context).backgroundColor,
+                      offset: const Offset(-3, 0),
+                      blurRadius: 10,
+                    ),
+                    BoxShadow(
+                      color: Theme.of(context).backgroundColor,
+                      offset: const Offset(0, -3),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 8,
+                      bottom: 8,
+                      left: 8,
+                      right: 12,
+                    ),
+                    child: Text(DateFormat.jm()
+                        .addPattern('; d MMMM y (EEEE)')
+                        .format(widget.published)))),
+          ),
+        ],
       ),
     );
   }

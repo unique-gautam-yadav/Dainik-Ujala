@@ -52,10 +52,10 @@ class RoundedImage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).backgroundColor.withOpacity(.8),
             borderRadius: BorderRadius.circular(12),
-            image: DecorationImage(
-              image: NetworkImage(artical.urlToImage),
-              fit: BoxFit.cover,
-            ),
+            // image: DecorationImage(
+              // image: NetworkImage(artical.urlToImage),
+              // fit: BoxFit.cover,
+            // ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -131,9 +131,9 @@ class Article extends StatelessWidget {
                                   .backgroundColor
                                   .withOpacity(.8),
                               borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                  image: NetworkImage(data.urlToImage),
-                                  fit: BoxFit.cover),
+                              // image: DecorationImage(
+                                  // image: NetworkImage(data.urlToImage),
+                                  // fit: BoxFit.cover),
                             ),
                             // child: Center(
                             //     child: Text(
