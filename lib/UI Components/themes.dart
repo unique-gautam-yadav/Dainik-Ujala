@@ -11,7 +11,7 @@ class MyThemes {
     primarySwatch: Colors.deepOrange,
     shadowColor: const Color.fromARGB(255, 86, 24, 5),
     fontFamily: GoogleFonts.lato().toString(),
-    canvasColor: const Color.fromARGB(255, 20, 27, 30),
+    scaffoldBackgroundColor: const Color.fromARGB(255, 20, 27, 30),
     cardColor: const Color.fromARGB(255, 0, 12, 6),
     colorScheme: ColorScheme.dark(secondary: Colors.grey.shade500),
     bottomSheetTheme: const BottomSheetThemeData(
@@ -25,7 +25,7 @@ class MyThemes {
     primarySwatch: Colors.deepOrange,
     shadowColor: Colors.deepOrange.shade200,
     fontFamily: GoogleFonts.lato().toString(),
-    canvasColor: Colors.white,
+    scaffoldBackgroundColor: Colors.white,
     cardColor: Colors.deepOrange.shade50.withOpacity(.6),
     colorScheme: ColorScheme.light(secondary: Colors.deepOrange.shade200),
     bottomSheetTheme:

@@ -86,6 +86,7 @@ class _HomeTabState extends State<HomeTab> {
         child: Column(
           children: [
             Container(
+                width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                     color: Theme.of(context).cardColor,
@@ -98,7 +99,8 @@ class _HomeTabState extends State<HomeTab> {
                           : [
                               Center(
                                 child: SpinKitSpinningLines(
-                                  color: Theme.of(context).backgroundColor,
+                                  color:
+                                      Theme.of(context).colorScheme.background,
                                   size: 50,
                                 ),
                               )

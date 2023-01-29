@@ -1,5 +1,8 @@
 // ignore_for_file: avoid_print
 
+import 'dart:ui';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:dainik_ujala/Views/detial_page.dart';
 import 'package:flutter/material.dart';
@@ -29,12 +32,18 @@ class PopUpMenu extends StatelessWidget {
   }
 }
 
-class RoundedImage extends StatelessWidget {
+class RoundedImage extends StatefulWidget {
   const RoundedImage({
     Key? key,
     required this.artical,
   }) : super(key: key);
   final NewsArtical artical;
+
+  @override
+  State<RoundedImage> createState() => _RoundedImageState();
+}
+
+class _RoundedImageState extends State<RoundedImage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -42,40 +51,63 @@ class RoundedImage extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DetailPage(data: artical),
+              builder: (context) => DetailPage(data: widget.artical),
             ));
       },
       child: Hero(
-        tag: Key(artical.id.toString()),
-        child: Container(
-          margin: const EdgeInsets.all(0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).backgroundColor.withOpacity(.8),
-            borderRadius: BorderRadius.circular(12),
-            // image: DecorationImage(
-              // image: NetworkImage(artical.urlToImage),
-              // fit: BoxFit.cover,
-            // ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+        tag: Key(widget.artical.id.toString()),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor.withOpacity(0.5),
-                  borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(12),
-                      bottomRight: Radius.circular(12)),
-                  backgroundBlendMode: BlendMode.xor,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: HtmlWidget(
-                    artical.title,
-                    textStyle: Theme.of(context)
-                        .textTheme
-                        .bodyText2!
-                        .copyWith(color: Colors.white),
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * (9 / 16),
+                    child: CachedNetworkImage(
+                      fit: BoxFit.fill,
+                      imageUrl: widget.artical.urlToImage,
+                      placeholder: (context, url) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                    ),
+                  )),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey.withOpacity(.2),
+                      border: const Border(
+                          top: BorderSide(color: Colors.blueGrey, width: 1))),
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 4, bottom: 8, left: 8, right: 2),
+                        child: HtmlWidget(
+                          widget.artical.title,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -111,8 +143,9 @@ class Article extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 16),
         child: Container(
           decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16)),
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -123,26 +156,31 @@ class Article extends StatelessWidget {
                       children: [
                         Hero(
                           tag: Key("News__${data.id.toString()}"),
-                          child: Container(
+                          child: SizedBox(
                             width: 120,
                             height: 70,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .backgroundColor
-                                  .withOpacity(.8),
+                            child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
-                              // image: DecorationImage(
-                                  // image: NetworkImage(data.urlToImage),
-                                  // fit: BoxFit.cover),
+                              child: CachedNetworkImage(
+                                fit: BoxFit.fill,
+                                imageUrl: data.urlToImage,
+                                placeholder: (context, url) {
+                                  return Image.asset(
+                                    "assets/images/logo.jpg",
+                                    fit: BoxFit.fill,
+                                  );
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Opacity(
+                                    opacity: .8,
+                                    child: Image.asset(
+                                      "assets/images/logo.jpg",
+                                      fit: BoxFit.fill,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                            // child: Center(
-                            //     child: Text(
-                            //   "${data.categoriesStr.toString()}",
-                            //   style: TextStyle(
-                            //     color: Colors.white,
-                            //     fontSize: 25,
-                            //   ),
-                            // )),
                           ),
                         ),
                       ],
@@ -153,21 +191,26 @@ class Article extends StatelessWidget {
                     )
                   ],
                 ),
-                const Divider(),
-                SizedBox(
-                  height: 45,
-                  width: MediaQuery.of(context).size.width - 100,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: data.categoriesStr.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ArticleType(text: data.categoriesStr[index]),
-                      );
-                    },
-                  ),
-                ),
+                data.categoriesStr.isNotEmpty
+                    ? Divider(color: Colors.grey.withOpacity(.2))
+                    : const SizedBox(),
+                data.categoriesStr.isNotEmpty
+                    ? SizedBox(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width - 100,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: data.categoriesStr.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child:
+                                  ArticleType(text: data.categoriesStr[index]),
+                            );
+                          },
+                        ),
+                      )
+                    : const SizedBox(),
                 // ListTile(
                 //   title: Text(data.title),
                 //   subtitle: SizedBox(
@@ -268,15 +311,13 @@ class ArticleType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Chip(label: Text(text));
-    //     Container(
-    //   decoration: BoxDecoration(
-    //     color: Theme.of(context).primaryColor,
-    //   ),
-    //   child: Padding(
-    //     padding: const EdgeInsets.only(top: 2, bottom: 2, right: 8, left: 8),
-    //     child: ChipText(text: text),
-    //   ),
-    // );
+    return Container(
+      padding: const EdgeInsets.only(left: 20, right: 20),
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(.3),
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Center(child: Text(text)),
+    );
   }
 }

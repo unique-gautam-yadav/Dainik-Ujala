@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -53,12 +54,12 @@ class _DetailPageState extends State<DetailPage> {
             ? const Color.fromARGB(255, 20, 27, 30)
             : Theme.of(context).appBarTheme.backgroundColor,
         title: SizedBox(
-          height: (Theme.of(context).textTheme.bodyText1?.fontSize ?? 0) * 1.5,
+          height: (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 0) * 1.5,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: HtmlWidget(
               widget.data.title,
-              textStyle: Theme.of(context).textTheme.bodyText1,
+              textStyle: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
@@ -77,13 +78,29 @@ class _DetailPageState extends State<DetailPage> {
                   child: Column(
                 children: [
                   Hero(
-                      tag: Key("News__${widget.data.id.toString()}"),
-                      child: Image.network(widget.data.urlToImage)),
+                    tag: Key("News__${widget.data.id.toString()}"),
+                    child: CachedNetworkImage(
+                      fit: BoxFit.fill,
+                      imageUrl: widget.data.urlToImage,
+                      placeholder: (context, url) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 10.0, bottom: 0, left: 8, right: 8),
                     child: HtmlWidget(widget.data.title,
-                        textStyle: Theme.of(context).textTheme.headline6),
+                        textStyle: Theme.of(context).textTheme.titleLarge),
                   ),
                   const Divider(),
                   Padding(
@@ -104,27 +121,27 @@ class _DetailPageState extends State<DetailPage> {
             bottom: 0,
             child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).backgroundColor,
+                  color: Theme.of(context).colorScheme.background,
                   borderRadius:
                       const BorderRadius.only(topRight: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                       offset: const Offset(3, 0),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                       offset: const Offset(0, 3),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                       offset: const Offset(-3, 0),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).colorScheme.background,
                       offset: const Offset(0, -3),
                       blurRadius: 10,
                     ),
