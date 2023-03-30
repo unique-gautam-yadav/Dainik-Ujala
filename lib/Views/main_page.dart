@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage>
             backgroundColor: Theme.of(context).hoverColor,
             leading: Icon(
               Icons.info,
-              color: Theme.of(context).errorColor,
+              color: Theme.of(context).colorScheme.error,
             ),
             actions: [
               TextButton(onPressed: () {}, child: const Text("Retry"))
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage>
             indicator: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Theme.of(context).primaryColor),
-            labelStyle: Theme.of(context).textTheme.bodyText2,
+            labelStyle: Theme.of(context).textTheme.bodyMedium,
             tabs: const [
               Tab(height: 40, child: CustomChip(label: ChipText(text: "Home"))),
               Tab(

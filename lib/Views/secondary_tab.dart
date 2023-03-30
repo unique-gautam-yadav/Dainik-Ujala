@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dainik_ujala/Backend/api.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:dainik_ujala/UI%20Components/compnents.dart';
@@ -33,7 +35,7 @@ class _SecondaryTabState extends State<SecondaryTab> {
         }
         pageNo++;
       } else {
-        print("Data Ended");
+        log("Data Ended");
         hasMore = false;
       }
     });
@@ -84,7 +86,7 @@ class _SecondaryTabState extends State<SecondaryTab> {
                 ? Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SpinKitSpinningLines(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       size: 50,
                     ))
                 : const SizedBox()

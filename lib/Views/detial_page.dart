@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatefulWidget {
-  DetailPage({
+  const DetailPage({
     super.key,
     required this.data,
-  }) {
-    published = DateTime.parse(data.publishedAt);
-  }
-  late DateTime published;
+  });
   final NewsArtical data;
 
   @override
@@ -23,8 +18,6 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  late DateTime publishDateTime;
-
   _handleShare(String url, String title) async {
     final box = context.findRenderObject() as RenderBox?;
     try {
@@ -156,7 +149,7 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     child: Text(DateFormat.jm()
                         .addPattern('; d MMMM y (EEEE)')
-                        .format(widget.published)))),
+                        .format(DateTime.parse(widget.data.publishedAt))))),
           ),
         ],
       ),

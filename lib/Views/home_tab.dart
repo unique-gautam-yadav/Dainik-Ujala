@@ -130,7 +130,7 @@ class _HomeTabState extends State<HomeTab> {
                 ? Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: SpinKitSpinningLines(
-                      color: Theme.of(context).backgroundColor,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       size: 50,
                     ))
                 : const SizedBox()

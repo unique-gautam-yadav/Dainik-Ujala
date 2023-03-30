@@ -11,22 +11,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'Backend/providers.dart';
 import 'firebase_options.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
-    importance: Importance.high,
-    playSound: true);
 
-// flutter local notification
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-
-// firebase background message handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print('A Background message just showed up :  ${message.messageId}');
+  log('A Background message just showed up :  ${message.messageId}');
 }
 
 void main() async {
@@ -37,13 +26,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-// Firebase local notification plugin
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()
-      ?.createNotificationChannel(channel);
-
-//Firebase messaging
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
@@ -104,26 +86,26 @@ class MainScreenState extends State<MainScreen> {
               ));
         }
         if (initialURI != null) {
-          debugPrint("Initial URI received ${initialURI.toString()}");
+          log("Initial URI received ${initialURI.toString()}");
           if (!mounted) {
             return;
           }
           setState(() {});
         } else {
-          debugPrint("Null Initial URI received");
+          log("Null Initial URI received");
         }
 
         goAway(initialURI);
       } on PlatformException {
         // 5
-        debugPrint("Failed to receive initial uri");
+        log("Failed to receive initial uri");
       } on FormatException catch (err) {
-        debugPrint(err.message);
+        log(err.message);
         // 6
         if (!mounted) {
           return;
         }
-        debugPrint('Malformed Initial URI received');
+        log('Malformed Initial URI received');
       }
     }
   }
@@ -140,36 +122,6 @@ class MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        flutterLocalNotificationsPlugin.show(
-            notification.hashCode,
-            notification.title,
-            notification.body,
-            NotificationDetails(
-              android: AndroidNotificationDetails(
-                channel.id,
-                channel.name,
-                color: Colors.white,
-                playSound: true,
-                icon: '@mipmap/ic_lancher',
-              ),
-            ));
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('A new messageopen app event was published');
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      if (notification != null && android != null) {
-        haveToHandleURL = false;
-        goAway(Uri.parse(message.data['url']));
-        log(message.toMap().toString());
-      }
-    });
     if (haveToHandleURL) {
       _initURIHandler();
     }

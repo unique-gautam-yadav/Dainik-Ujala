@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:http/http.dart' as http;
 
@@ -21,19 +22,19 @@ class FetchData {
           url = "$api?slug=$slug";
         }
       }
-      print(url);
+      log(url);
       final response = await http.get(Uri.parse(url));
 
       final decodedData = jsonDecode(response.body);
 
       // var newsData = decodedData["articles"];
-      print(decodedData);
+      log(decodedData);
 
       List<dynamic> data = List.from(decodedData);
 
       for (int i = 0; i < data.length; i++) {
         if (data[i] == null) {
-          print("Something Skipped");
+          log("Something Skipped");
           continue;
         } else {
           NewsArtical item = NewsArtical(
@@ -49,9 +50,9 @@ class FetchData {
           dataToBeSent.add(item);
         }
       }
-      print("$page  ${dataToBeSent.length}    Data Fetched");
+      log("$page  ${dataToBeSent.length}    Data Fetched");
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
     }
     return dataToBeSent;
   }
