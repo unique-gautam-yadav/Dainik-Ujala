@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class NewsArtical {
   late final int id;
   late final String author;
@@ -36,6 +38,9 @@ class NewsArtical {
     }
     if (categories.contains(3)) {
       categoriesStr.add("बृज समाचार");
+    }
+    if (categories.contains(1)) {
+      categoriesStr.add("पंचांग-राशिफल");
     }
   }
 }

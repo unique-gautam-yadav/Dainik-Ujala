@@ -29,30 +29,36 @@ class _HomeTabState extends State<HomeTab> {
 
   _loadNews() async {
     Iterable<NewsArtical> d = await FetchData.callApi(page: pageNo);
-    setState(() {
-      if (d.isNotEmpty) {
-        for (int i = 0; i < d.length; i++) {
-          Widget one = Article(data: d.elementAt(i), curIndex: i);
-          newsItems.add(one);
+    if (mounted) {
+      setState(() {
+        if (d.isNotEmpty) {
+          for (int i = 0; i < d.length; i++) {
+            Widget one = Article(data: d.elementAt(i), curIndex: i);
+            newsItems.add(one);
+          }
+          pageNo++;
+        } else {
+          // print("Data Ended");
+          hasMore = false;
         }
-        pageNo++;
-      } else {
-        // print("Data Ended");
-        hasMore = false;
-      }
-    });
+      });
+    }
   }
 
   _loadHeadlines() async {
-    Iterable<NewsArtical> d = await FetchData.callApi(page: 1);
-    setState(() {
-      for (int i = 0; i < d.length; i++) {
-        Widget one = RoundedImage(
-          artical: d.elementAt(i),
-        );
-        sliderItems.add(one);
+    if (mounted) {
+      Iterable<NewsArtical> d = await FetchData.callApi(page: 1);
+      if (mounted) {
+        setState(() {
+          for (int i = 0; i < d.length; i++) {
+            Widget one = RoundedImage(
+              artical: d.elementAt(i),
+            );
+            sliderItems.add(one);
+          }
+        });
       }
-    });
+    }
   }
 
   _handleReload() async {
@@ -76,68 +82,76 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    return LiquidPullToRefresh(
-      color: Theme.of(context).shadowColor,
-      onRefresh: () async {
-        _handleReload();
-      },
-      child: SingleChildScrollView(
+    return Builder(builder: (context) {
+      return ListView(
         controller: scrollController,
-        child: Column(
-          children: [
-            Container(
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CarouselSlider(
-                      items: sliderItems.isNotEmpty
-                          ? sliderItems
-                          : [
-                              Center(
-                                child: SpinKitSpinningLines(
-                                  color:
-                                      Theme.of(context).colorScheme.background,
-                                  size: 50,
-                                ),
-                              )
-                            ],
-                      options: CarouselOptions(
-                          autoPlay: sliderItems.isNotEmpty ? true : false,
-                          enlargeCenterPage: true,
-                          disableCenter: true,
-                          autoPlayInterval: const Duration(seconds: 5)),
-                    ))),
-            const SizedBox(height: 2),
-            GestureDetector(
-              onPanDown: (details) {
-                Future.delayed(const Duration(seconds: 1)).then((value) {
+        children: [
+          Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16)),
+              child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CarouselSlider(
+                    items: sliderItems.isNotEmpty
+                        ? sliderItems
+                        : [
+                            Center(
+                              child: SpinKitSpinningLines(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge!
+                                    .color!,
+                                size: 50,
+                              ),
+                            )
+                          ],
+                    options: CarouselOptions(
+                        autoPlay: sliderItems.isNotEmpty ? true : false,
+                        enlargeCenterPage: true,
+                        disableCenter: true,
+                        autoPlayInterval: const Duration(seconds: 5)),
+                  ))),
+          const SizedBox(height: 2),
+          GestureDetector(
+            onPanDown: (details) {
+              Future.delayed(const Duration(seconds: 1)).then((value) {
+                if (scrollController.hasClients) {
                   if (scrollController.position.maxScrollExtent <=
                       scrollController.offset + 500) {
                     _loadNews();
                   }
-                });
-              },
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: newsItems),
-            ),
-            hasMore & (pageNo > 1)
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SpinKitSpinningLines(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      size: 50,
-                    ))
-                : const SizedBox()
-          ],
-        ),
-      ),
-    );
+                }
+              });
+            },
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: newsItems),
+          ),
+          hasMore & (pageNo > 1)
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SpinKitSpinningLines(
+                    color: Theme.of(context).textTheme.bodyLarge!.color!,
+                    size: 50,
+                  ))
+              : const SizedBox()
+          // SliverOverlapAbsorber(
+          //   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+          //   sliver: SliverList(
+          //     delegate: SliverChildListDelegate(
+          //       [
+
+          //       ],
+          //     ),
+          //   ),
+          // )
+        ],
+      );
+    });
   }
 
   @override

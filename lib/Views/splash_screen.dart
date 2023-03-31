@@ -53,13 +53,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: const Padding(
-        padding: EdgeInsets.only(bottom: 100),
-        child: SizedBox(
-          height: 25,
-          child: SpinKitWave(
-            color: Colors.deepOrange,
-            size: 25,
+      bottomSheet: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: const Padding(
+          padding: EdgeInsets.only(bottom: 100),
+          child: SizedBox(
+            height: 25,
+            child: SpinKitWave(
+              color: Colors.deepOrange,
+              size: 25,
+            ),
           ),
         ),
       ),

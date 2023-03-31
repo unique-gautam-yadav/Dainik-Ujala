@@ -27,26 +27,30 @@ class _SecondaryTabState extends State<SecondaryTab> {
   _loadNews() async {
     Iterable<NewsArtical> d =
         await FetchData.callApi(category: widget.category, page: pageNo);
-    setState(() {
-      if (d.isNotEmpty) {
-        for (int i = 0; i < d.length; i++) {
-          Widget one = Article(data: d.elementAt(i), curIndex: i);
-          newsItems.add(one);
+    if (mounted) {
+      setState(() {
+        if (d.isNotEmpty) {
+          for (int i = 0; i < d.length; i++) {
+            Widget one = Article(data: d.elementAt(i), curIndex: i);
+            newsItems.add(one);
+          }
+          pageNo++;
+        } else {
+          log("Data Ended");
+          hasMore = false;
         }
-        pageNo++;
-      } else {
-        log("Data Ended");
-        hasMore = false;
-      }
-    });
+      });
+    }
   }
 
   _handleReload() async {
-    setState(() {
-      pageNo = 1;
-      newsItems.clear();
-    });
-    await _loadNews();
+    if (mounted) {
+      setState(() {
+        pageNo = 1;
+        newsItems.clear();
+      });
+      await _loadNews();
+    }
   }
 
   @override
@@ -58,40 +62,36 @@ class _SecondaryTabState extends State<SecondaryTab> {
 
   @override
   Widget build(BuildContext context) {
-    return LiquidPullToRefresh(
-      color: Theme.of(context).shadowColor,
-      onRefresh: () async {
-        _handleReload();
-      },
-      child: SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onPanDown: (details) {
-                Future.delayed(const Duration(seconds: 1)).then((value) {
+    return SingleChildScrollView(
+      controller: scrollController,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onPanDown: (details) {
+              Future.delayed(const Duration(seconds: 1)).then((value) {
+                if (scrollController.hasClients) {
                   if (scrollController.position.maxScrollExtent <=
                       scrollController.offset + 500) {
                     _loadNews();
                   }
-                });
-              },
-              child: Column(
-                children: newsItems,
-              ),
+                }
+              });
+            },
+            child: Column(
+              children: newsItems,
             ),
-            hasMore
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SpinKitSpinningLines(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      size: 50,
-                    ))
-                : const SizedBox()
-          ],
-        ),
+          ),
+          hasMore
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SpinKitSpinningLines(
+                    color: Theme.of(context).textTheme.bodyLarge!.color!,
+                    size: 50,
+                  ))
+              : const SizedBox()
+        ],
       ),
     );
   }

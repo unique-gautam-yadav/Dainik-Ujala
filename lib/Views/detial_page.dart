@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:image_downloader/image_downloader.dart';
+import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,13 +23,16 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   _handleShare(String url, String title) async {
+    log("askd");
     final box = context.findRenderObject() as RenderBox?;
     try {
       await Share.share(url,
           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+      log("Done");
     } catch (e) {
       // print(e);
     }
+    log("bbasdk");
   }
 
   Future<bool> _handleUrlTap(String u) async {
@@ -100,6 +107,29 @@ class _DetailPageState extends State<DetailPage> {
                     padding: const EdgeInsets.only(
                         top: 0, left: 8, right: 8, bottom: 80),
                     child: HtmlWidget(
+                      onTapImage: (p0) {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    ShowImage(url: p0.sources.first.url),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(0.0, 1.0);
+                              const end = Offset.zero;
+                              const curve = Curves.ease;
+
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ),
+                        );
+                      },
                       widget.data.content,
                       onTapUrl: (url) {
                         return _handleUrlTap(url);
@@ -114,27 +144,27 @@ class _DetailPageState extends State<DetailPage> {
             bottom: 0,
             child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
+                  color: Theme.of(context).scaffoldBackgroundColor,
                   borderRadius:
                       const BorderRadius.only(topRight: Radius.circular(30)),
                   boxShadow: [
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       offset: const Offset(3, 0),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       offset: const Offset(0, 3),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       offset: const Offset(-3, 0),
                       blurRadius: 10,
                     ),
                     BoxShadow(
-                      color: Theme.of(context).colorScheme.background,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       offset: const Offset(0, -3),
                       blurRadius: 10,
                     ),
@@ -153,6 +183,96 @@ class _DetailPageState extends State<DetailPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ShowImage extends StatefulWidget {
+  const ShowImage({super.key, required this.url});
+
+  final String url;
+
+  @override
+  State<ShowImage> createState() => _ShowImageState();
+}
+
+class _ShowImageState extends State<ShowImage> {
+  @override
+  Widget build(BuildContext context) {
+    bool downloaded = false;
+    bool downloading = false;
+    bool downloadError = false;
+
+    return Scaffold(
+      appBar: AppBar(actions: [
+        StatefulBuilder(
+          builder: (context, setS) {
+            return IconButton(
+              onPressed: () async {
+                if (!downloading && !downloaded) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Starting downloading..."),
+                    ),
+                  );
+                  setS(() {
+                    downloading = true;
+                  });
+                  String? res = await ImageDownloader.downloadImage(widget.url);
+                  log("$res");
+                  if (context.mounted) {
+                    if (res != null) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Image downloaded"),
+                        ),
+                      );
+                      setS(() {
+                        downloaded = true;
+                        downloading = false;
+                      });
+                    } else {
+                      setState(() {
+                        downloadError = true;
+                        downloaded = false;
+                        downloading = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Something went wrong"),
+                        ),
+                      );
+                    }
+                  }
+                }
+              },
+              icon: downloading
+                  ? const Icon(Icons.downloading_rounded)
+                  : downloaded
+                      ? const Icon(Icons.download_done_rounded)
+                      : downloadError
+                          ? const Icon(Icons.file_download_off_rounded)
+                          : const Icon(Icons.download_rounded),
+            );
+          },
+        )
+      ]),
+      body: Container(
+          decoration:
+              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          constraints:
+              BoxConstraints.expand(height: MediaQuery.of(context).size.height),
+          child: Stack(
+            children: [
+              Positioned(
+                  child: PhotoView(
+                backgroundDecoration: BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor),
+                imageProvider: NetworkImage(widget.url),
+              )),
+            ],
+          )),
     );
   }
 }
