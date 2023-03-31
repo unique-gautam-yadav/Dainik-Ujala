@@ -79,21 +79,46 @@ class _DetailPageState extends State<DetailPage> {
                 children: [
                   Hero(
                     tag: Key("News__${widget.data.id.toString()}"),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.fill,
-                      imageUrl: widget.data.urlToImage,
-                      placeholder: (context, url) {
-                        return Image.asset(
-                          "assets/images/logo.jpg",
-                          fit: BoxFit.fill,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) =>
+                                    ShowImage(url: widget.data.urlToImage),
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
+                              const begin = Offset(0.0, 1.0);
+                              const end = Offset.zero;
+                              const curve = Curves.ease;
+
+                              var tween = Tween(begin: begin, end: end)
+                                  .chain(CurveTween(curve: curve));
+                              return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                              );
+                            },
+                          ),
                         );
                       },
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                          "assets/images/logo.jpg",
-                          fit: BoxFit.fill,
-                        );
-                      },
+                      child: CachedNetworkImage(
+                        fit: BoxFit.fill,
+                        imageUrl: widget.data.urlToImage,
+                        placeholder: (context, url) {
+                          return Image.asset(
+                            "assets/images/logo.jpg",
+                            fit: BoxFit.fill,
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Image.asset(
+                            "assets/images/logo.jpg",
+                            fit: BoxFit.fill,
+                          );
+                        },
+                      ),
                     ),
                   ),
                   Padding(

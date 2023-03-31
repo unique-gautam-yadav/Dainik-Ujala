@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../Backend/providers.dart';
 import '../UI Components/compnents.dart';
 import 'home_tab.dart';
+import 'media_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,14 +16,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
+class _HomePageState extends State<HomePage> {
+  int curIndex = 0;
 
   @override
   void initState() {
-    _tabController = TabController(length: 6, vsync: this);
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       if (result == ConnectivityResult.mobile ||
           result == ConnectivityResult.wifi ||
@@ -46,6 +44,69 @@ class _HomePageState extends State<HomePage>
     super.initState();
   }
 
+  List<Widget> pages = const [NewsTab(), MediaView()];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: curIndex,
+        destinations: const [
+          NavigationDestination(
+              icon: Icon(Icons.newspaper_outlined),
+              label: "News",
+              selectedIcon: Icon(Icons.newspaper_rounded)),
+          NavigationDestination(
+              icon: Icon(Icons.photo_library_outlined),
+              label: "Media",
+              selectedIcon: Icon(Icons.photo_library_rounded)),
+        ],
+        onDestinationSelected: (value) {
+          setState(() {
+            curIndex = value;
+          });
+        },
+      ),
+      body: pages[curIndex],
+    );
+  }
+}
+
+class NewsTab extends StatefulWidget {
+  const NewsTab({
+    super.key,
+  });
+
+  @override
+  State<NewsTab> createState() => _NewsTabState();
+}
+
+class _NewsTabState extends State<NewsTab> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    _tabController = TabController(length: 7, vsync: this);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Skelaton(scaffoldKey: scaffoldKey, tabController: _tabController);
+  }
+}
+
+class Skelaton extends StatelessWidget {
+  const Skelaton({
+    super.key,
+    required this.scaffoldKey,
+    TabController? tabController,
+  }) : _tabController = tabController;
+
+  final GlobalKey<State<StatefulWidget>> scaffoldKey;
+  final TabController? _tabController;
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, value, child) {
@@ -59,7 +120,7 @@ class _HomePageState extends State<HomePage>
                 handle:
                     NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                 sliver: SliverAppBar(
-                  // pinned: true,
+                  pinned: true,
                   actions: [
                     IconButton(
                       onPressed: () {
@@ -75,8 +136,7 @@ class _HomePageState extends State<HomePage>
                   ],
                   title: SizedBox(
                       height: 55, child: Image.asset("assets/images/logo.png")),
-                  bottom: TabBar(
-                    
+                  bottom: _tabController != null ? TabBar(
                     padding: const EdgeInsets.all(3),
                     isScrollable: true,
                     controller: _tabController,
@@ -87,21 +147,28 @@ class _HomePageState extends State<HomePage>
                       Tab(height: 40, text: "खेल"),
                       Tab(height: 40, text: "देश-विदेश"),
                       Tab(height: 40, text: "पंचांग-राशिफल"),
+                      Tab(height: 40, text: "बिजनेस")
                     ],
-                  ),
+                  ) : null,
                 ),
               )
             ],
-            body: TabBarView(
-              controller: _tabController,
-              children: const [
-                HomeTab(),
-                SecondaryTab(category: 3),
-                SecondaryTab(category: 4),
-                SecondaryTab(category: 6),
-                SecondaryTab(category: 5),
-                SecondaryTab(category: 1),
-              ],
+            body: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 95),
+                child: TabBarView(
+                  controller: _tabController,
+                  children: const [
+                    HomeTab(),
+                    SecondaryTab(category: 3),
+                    SecondaryTab(category: 4),
+                    SecondaryTab(category: 6),
+                    SecondaryTab(category: 5),
+                    SecondaryTab(category: 1),
+                    SecondaryTab(category: 55),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

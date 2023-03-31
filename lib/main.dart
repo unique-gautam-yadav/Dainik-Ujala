@@ -49,29 +49,7 @@ class MyApp extends StatelessWidget {
           title: 'Flutter Demo',
           theme: value.isDark
               ? MyThemes.lightTheme
-              : ThemeData(
-                  appBarTheme: AppBarTheme(
-                    backgroundColor: Colors.grey.shade300.withOpacity(0.6),
-                    foregroundColor: Colors.black,
-                  ),
-                  tabBarTheme: TabBarTheme(
-                    indicatorColor: Colors.deepOrange,
-                    labelColor: Colors.deepOrange.shade800,
-                    dividerColor: Colors.transparent,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    unselectedLabelColor: Colors.black,
-                  ),
-                  brightness: Brightness.dark,
-                  useMaterial3: true,
-                  colorSchemeSeed: const Color(0x00FF7722),
-                  fontFamily: GoogleFonts.lato().toString(),
-                  scaffoldBackgroundColor:
-                      const Color.fromARGB(255, 20, 27, 30),
-                  cardColor: const Color.fromARGB(255, 0, 12, 6),
-                  bottomSheetTheme: const BottomSheetThemeData(
-                      backgroundColor: Color.fromARGB(255, 20, 27, 30),
-                      elevation: 0),
-                ),
+              : MyThemes.darkTheme,
           debugShowCheckedModeBanner: false,
           home: const MainScreen(),
         );
@@ -88,8 +66,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class MainScreenState extends State<MainScreen> {
-  StreamSubscription? _streamSubscription;
-
   bool haveToHandleURL = true;
 
   Future<void> _initURIHandler() async {
@@ -153,12 +129,6 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
-  }
-
-  @override
-  void dispose() {
-    _streamSubscription?.cancel();
-    super.dispose();
+    return const SplashScreen();
   }
 }

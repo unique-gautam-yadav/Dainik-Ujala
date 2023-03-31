@@ -45,78 +45,87 @@ class RoundedImage extends StatefulWidget {
 }
 
 class _RoundedImageState extends State<RoundedImage> {
+  bool pressed = false;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetailPage(data: widget.artical),
-            ));
-      },
-      child: Hero(
-        tag: Key(widget.artical.id.toString()),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            children: [
-              Positioned(
-                  top: 0,
+    return Styled.widget(
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DetailPage(data: widget.artical),
+              ));
+        },
+        child: Hero(
+          tag: Key(widget.artical.id.toString()),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Stack(
+              children: [
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width * (9 / 16),
+                      child: CachedNetworkImage(
+                        fit: BoxFit.fill,
+                        imageUrl: widget.artical.urlToImage,
+                        placeholder: (context, url) {
+                          return Image.asset(
+                            "assets/images/logo.jpg",
+                            fit: BoxFit.fill,
+                          );
+                        },
+                        errorWidget: (context, url, error) {
+                          return Image.asset(
+                            "assets/images/logo.jpg",
+                            fit: BoxFit.fill,
+                          );
+                        },
+                      ),
+                    )),
+                Positioned(
+                  bottom: 0,
                   left: 0,
                   right: 0,
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.width * (9 / 16),
-                    child: CachedNetworkImage(
-                      fit: BoxFit.fill,
-                      imageUrl: widget.artical.urlToImage,
-                      placeholder: (context, url) {
-                        return Image.asset(
-                          "assets/images/logo.jpg",
-                          fit: BoxFit.fill,
-                        );
-                      },
-                      errorWidget: (context, url, error) {
-                        return Image.asset(
-                          "assets/images/logo.jpg",
-                          fit: BoxFit.fill,
-                        );
-                      },
-                    ),
-                  )),
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey.withOpacity(.2),
-                      border: const Border(
-                          top: BorderSide(color: Colors.blueGrey, width: 1))),
-                  child: ClipRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            top: 4, bottom: 8, left: 8, right: 2),
-                        child: HtmlWidget(
-                          widget.artical.title,
-                          textStyle: Theme.of(context)
-                              .textTheme
-                              .bodyMedium!
-                              .copyWith(color: Colors.white),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.blueGrey.withOpacity(.2),
+                        border: const Border(
+                            top: BorderSide(color: Colors.blueGrey, width: 1))),
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              top: 4, bottom: 8, left: 8, right: 2),
+                          child: HtmlWidget(
+                            widget.artical.title,
+                            textStyle: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(color: Colors.white),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
-    );
+    )
+        .gestures(
+          onTapChange: (tapStatus) => setState(() => pressed = tapStatus),
+        )
+        .scale(all: pressed ? 0.95 : 1.0, animate: true)
+        .animate(const Duration(milliseconds: 150), Curves.easeOut);
   }
 }
 

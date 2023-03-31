@@ -1,19 +1,17 @@
 name: dainik_ujala
 description: A new Flutter project.
 
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 version: 1.0.1+1
 
 environment:
-  sdk: '>=2.18.5 <3.0.0'
-
+  sdk: ">=2.18.5 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-    
+
   cupertino_icons: ^1.0.2
   google_fonts: ^3.0.1
   carousel_slider: ^4.2.1
@@ -39,14 +37,11 @@ dependencies:
   photo_view: ^0.14.0
   image_downloader: ^0.31.0
 
-
 flutter:
   uses-material-design: true
-
 
   assets:
     - assets/images/
 dev_dependencies:
   flutter_test:
     sdk: flutter
-

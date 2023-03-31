@@ -5,7 +5,6 @@ import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:liquid_pull_to_refresh/liquid_pull_to_refresh.dart';
 
 import '../UI Components/compnents.dart';
 

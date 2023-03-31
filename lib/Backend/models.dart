@@ -42,5 +42,8 @@ class NewsArtical {
     if (categories.contains(1)) {
       categoriesStr.add("पंचांग-राशिफल");
     }
+    if (categories.contains(55)) {
+      categoriesStr.add("बिजनेस");
+    }
   }
 }
