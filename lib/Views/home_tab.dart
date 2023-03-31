@@ -5,6 +5,7 @@ import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:styled_widget/styled_widget.dart';
 
 import '../UI Components/compnents.dart';
 
@@ -60,16 +61,6 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
-  _handleReload() async {
-    setState(() {
-      pageNo = 1;
-      sliderItems.clear();
-      newsItems.clear();
-    });
-    await _loadHeadlines();
-    await _loadNews();
-  }
-
   @override
   void initState() {
     super.initState();
@@ -85,34 +76,40 @@ class _HomeTabState extends State<HomeTab> {
       return ListView(
         controller: scrollController,
         children: [
-          Container(
-              width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16)),
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CarouselSlider(
-                    items: sliderItems.isNotEmpty
-                        ? sliderItems
-                        : [
-                            Center(
-                              child: SpinKitSpinningLines(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge!
-                                    .color!,
-                                size: 50,
-                              ),
-                            )
-                          ],
-                    options: CarouselOptions(
-                        autoPlay: sliderItems.isNotEmpty ? true : false,
-                        enlargeCenterPage: true,
-                        disableCenter: true,
-                        autoPlayInterval: const Duration(seconds: 5)),
-                  ))),
+          Styled.widget(
+            child: Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.all(12),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(16)),
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CarouselSlider(
+                      items: sliderItems.isNotEmpty
+                          ? sliderItems
+                          : [
+                              Center(
+                                child: SpinKitSpinningLines(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge!
+                                      .color!,
+                                  size: 50,
+                                ),
+                              )
+                            ],
+                      options: CarouselOptions(
+                          autoPlay: sliderItems.isNotEmpty ? true : false,
+                          enlargeCenterPage: true,
+                          disableCenter: true,
+                          autoPlayInterval: const Duration(seconds: 5)),
+                    ))),
+          ).elevation(
+            0.1,
+            shadowColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey.shade50.withOpacity(.4)
+                : Colors.black,
+          ),
           const SizedBox(height: 2),
           GestureDetector(
             onPanDown: (details) {

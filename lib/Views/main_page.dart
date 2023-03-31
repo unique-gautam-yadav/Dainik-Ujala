@@ -1,10 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dainik_ujala/Views/secondary_tab.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../Backend/providers.dart';
 import '../UI Components/compnents.dart';
 import 'home_tab.dart';
 import 'media_view.dart';
@@ -93,86 +90,39 @@ class _NewsTabState extends State<NewsTab> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Skelaton(scaffoldKey: scaffoldKey, tabController: _tabController);
-  }
-}
-
-class Skelaton extends StatelessWidget {
-  const Skelaton({
-    super.key,
-    required this.scaffoldKey,
-    TabController? tabController,
-  }) : _tabController = tabController;
-
-  final GlobalKey<State<StatefulWidget>> scaffoldKey;
-  final TabController? _tabController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<ThemeProvider>(builder: (context, value, child) {
-      return DefaultTabController(
-        length: 6,
-        child: Scaffold(
-          key: scaffoldKey,
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverAppBar(
-                  pinned: true,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        value.isDark
-                            ? value.isDark = false
-                            : value.isDark = true;
-                      },
-                      icon: Icon(value.isDark
-                          ? CupertinoIcons.moon_fill
-                          : CupertinoIcons.sun_max_fill),
-                    ),
-                    const PopUpMenu()
-                  ],
-                  title: SizedBox(
-                      height: 55, child: Image.asset("assets/images/logo.png")),
-                  bottom: _tabController != null ? TabBar(
-                    padding: const EdgeInsets.all(3),
-                    isScrollable: true,
-                    controller: _tabController,
-                    tabs: const [
-                      Tab(height: 40, text: "Home"),
-                      Tab(height: 40, text: "बृज समाचार"),
-                      Tab(height: 40, text: "प्रदेश"),
-                      Tab(height: 40, text: "खेल"),
-                      Tab(height: 40, text: "देश-विदेश"),
-                      Tab(height: 40, text: "पंचांग-राशिफल"),
-                      Tab(height: 40, text: "बिजनेस")
-                    ],
-                  ) : null,
-                ),
-              )
+    return Skelaton(
+      tabController: _tabController,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 95),
+          child: TabBarView(
+            controller: _tabController,
+            children: const [
+              HomeTab(),
+              SecondaryTab(category: 3),
+              SecondaryTab(category: 4),
+              SecondaryTab(category: 6),
+              SecondaryTab(category: 5),
+              SecondaryTab(category: 1),
+              SecondaryTab(category: 55),
             ],
-            body: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 95),
-                child: TabBarView(
-                  controller: _tabController,
-                  children: const [
-                    HomeTab(),
-                    SecondaryTab(category: 3),
-                    SecondaryTab(category: 4),
-                    SecondaryTab(category: 6),
-                    SecondaryTab(category: 5),
-                    SecondaryTab(category: 1),
-                    SecondaryTab(category: 55),
-                  ],
-                ),
-              ),
-            ),
           ),
         ),
-      );
-    });
+      ),
+      bottom: TabBar(
+        padding: const EdgeInsets.all(3),
+        isScrollable: true,
+        controller: _tabController,
+        tabs: const [
+          Tab(height: 40, text: "Home"),
+          Tab(height: 40, text: "बृज समाचार"),
+          Tab(height: 40, text: "प्रदेश"),
+          Tab(height: 40, text: "खेल"),
+          Tab(height: 40, text: "देश-विदेश"),
+          Tab(height: 40, text: "पंचांग-राशिफल"),
+          Tab(height: 40, text: "बिजनेस")
+        ],
+      ),
+    );
   }
 }

@@ -5,10 +5,14 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:dainik_ujala/Views/detial_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../Backend/providers.dart';
 
 class PopUpMenu extends StatelessWidget {
   const PopUpMenu({
@@ -229,11 +233,11 @@ class _ArticleState extends State<Article> {
         ),
       ),
     )
-        .ripple()
+        .ripple(splashColor:Theme.of(context).brightness == Brightness.light? Colors.grey : null)
         .elevation(
-          pressed ? 0 : 2.95,
+          pressed ? 0 : 0.1,
           shadowColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.grey.shade50.withOpacity(.3)
+              ? Colors.grey.shade50.withOpacity(.4)
               : Colors.black,
         )
         .clipRRect(all: 12)
@@ -260,5 +264,57 @@ class ArticleType extends StatelessWidget {
       ),
       child: Center(child: Text(text)),
     );
+  }
+}
+
+
+class Skelaton extends StatelessWidget {
+  const Skelaton({
+    super.key,
+    TabController? tabController,
+    this.bottom,
+    required this.body,
+  });
+
+  final PreferredSizeWidget? bottom;
+  final Widget body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<ThemeProvider>(builder: (context, value, child) {
+      return DefaultTabController(
+        length: 6,
+        child: Scaffold(
+          body: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              SliverOverlapAbsorber(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: SliverAppBar(
+                  pinned: true,
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        value.isDark
+                            ? value.isDark = false
+                            : value.isDark = true;
+                      },
+                      icon: Icon(value.isDark
+                          ? CupertinoIcons.moon_fill
+                          : CupertinoIcons.sun_max_fill),
+                    ),
+                    const PopUpMenu()
+                  ],
+                  title: SizedBox(
+                      height: 55, child: Image.asset("assets/images/logo.png")),
+                  bottom: bottom,
+                ),
+              )
+            ],
+            body: body,
+          ),
+        ),
+      );
+    });
   }
 }
