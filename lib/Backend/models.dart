@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:developer';
 
 class NewsArtical {
   late final int id;
@@ -54,10 +52,12 @@ class MediaModel {
   String? id;
   String? timeStamp;
   String? path;
+  String? captions;
   MediaModel({
     this.id,
     this.timeStamp,
     this.path,
+    this.captions,
   });
 
   Map<String, dynamic> toMap() {
@@ -65,6 +65,7 @@ class MediaModel {
       'id': id,
       'timeStamp': timeStamp,
       'path': path,
+      'captions': captions,
     };
   }
 
@@ -73,22 +74,11 @@ class MediaModel {
       id: map['id'] != null ? map['id'] as String : null,
       timeStamp: map['timeStamp'] != null ? map['timeStamp'] as String : null,
       path: map['path'] != null ? map['path'] as String : null,
+      captions: map['captions'] != null ? map['captions'] as String : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory MediaModel.fromJson(String source) => MediaModel.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  MediaModel copyWith({
-    String? id,
-    String? timeStamp,
-    String? path,
-  }) {
-    return MediaModel(
-      id: id ?? this.id,
-      timeStamp: timeStamp ?? this.timeStamp,
-      path: path ?? this.path,
-    );
-  }
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -233,7 +231,10 @@ class _ArticleState extends State<Article> {
         ),
       ),
     )
-        .ripple(splashColor:Theme.of(context).brightness == Brightness.light? Colors.grey : null)
+        .ripple(
+            splashColor: Theme.of(context).brightness == Brightness.light
+                ? Colors.grey
+                : null)
         .elevation(
           pressed ? 0 : 0.1,
           shadowColor: Theme.of(context).brightness == Brightness.light
@@ -267,7 +268,6 @@ class ArticleType extends StatelessWidget {
   }
 }
 
-
 class Skelaton extends StatelessWidget {
   const Skelaton({
     super.key,
@@ -283,38 +283,26 @@ class Skelaton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(builder: (context, value, child) {
       return DefaultTabController(
-        length: 6,
-        child: Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverOverlapAbsorber(
-                handle:
-                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                sliver: SliverAppBar(
-                  pinned: true,
-                  actions: [
-                    IconButton(
-                      onPressed: () {
-                        value.isDark
-                            ? value.isDark = false
-                            : value.isDark = true;
-                      },
-                      icon: Icon(value.isDark
-                          ? CupertinoIcons.moon_fill
-                          : CupertinoIcons.sun_max_fill),
-                    ),
-                    const PopUpMenu()
-                  ],
-                  title: SizedBox(
-                      height: 55, child: Image.asset("assets/images/logo.png")),
-                  bottom: bottom,
+          length: 6,
+          child: Scaffold(
+            appBar: AppBar(
+              actions: [
+                IconButton(
+                  onPressed: () {
+                    value.isDark ? value.isDark = false : value.isDark = true;
+                  },
+                  icon: Icon(value.isDark
+                      ? CupertinoIcons.moon_fill
+                      : CupertinoIcons.sun_max_fill),
                 ),
-              )
-            ],
+                const PopUpMenu()
+              ],
+              title: SizedBox(
+                  height: 55, child: Image.asset("assets/images/logo.png")),
+              bottom: bottom,
+            ),
             body: body,
-          ),
-        ),
-      );
+          ));
     });
   }
 }

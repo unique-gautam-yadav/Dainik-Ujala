@@ -47,29 +47,29 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyClIYUZey29Iwv3HQ_1woECnNK0mRnv6nA',
-    appId: '1:945933242150:web:a9bc2d379ea74b7cd3fbe7',
-    messagingSenderId: '945933242150',
-    projectId: 'newsapp-e9741',
-    authDomain: 'newsapp-e9741.firebaseapp.com',
-    storageBucket: 'newsapp-e9741.appspot.com',
+    apiKey: 'AIzaSyAqx_DNxZ7_fCdVbsxcOU_sglWfqDSlhoM',
+    appId: '1:8188421520:web:3b20fd1a564d64fc79ff15',
+    messagingSenderId: '8188421520',
+    projectId: 'dainik-ujala-live',
+    authDomain: 'dainik-ujala-live.firebaseapp.com',
+    storageBucket: 'dainik-ujala-live.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAkAFsQVggAgp8ZadjWWWF_oFmN7rxpjaE',
-    appId: '1:945933242150:android:664aa1a7a2511ce8d3fbe7',
-    messagingSenderId: '945933242150',
-    projectId: 'newsapp-e9741',
-    storageBucket: 'newsapp-e9741.appspot.com',
+    apiKey: 'AIzaSyBC9zwqNU3YyR0exxtIIKg0Spr5EncKmW4',
+    appId: '1:8188421520:android:7e298af0ee3373f679ff15',
+    messagingSenderId: '8188421520',
+    projectId: 'dainik-ujala-live',
+    storageBucket: 'dainik-ujala-live.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCndMjLClaqc7bSGO0tVjJcrl8IpSz6sHU',
-    appId: '1:945933242150:ios:b3f8f98513700812d3fbe7',
-    messagingSenderId: '945933242150',
-    projectId: 'newsapp-e9741',
-    storageBucket: 'newsapp-e9741.appspot.com',
-    iosClientId: '945933242150-l428sk426oousulj6cg8g3g26vdag0gj.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAdFyVDCS-4AAIB4wRseCuIKHFCOPo9MsM',
+    appId: '1:8188421520:ios:d9ac978e17e1e0a679ff15',
+    messagingSenderId: '8188421520',
+    projectId: 'dainik-ujala-live',
+    storageBucket: 'dainik-ujala-live.appspot.com',
+    iosClientId: '8188421520-vp3v7vpdvf1j7bb5kgq9m41ub6kk79kc.apps.googleusercontent.com',
     iosBundleId: 'com.dainikujala.live',
   );
 }

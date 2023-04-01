@@ -92,22 +92,17 @@ class _NewsTabState extends State<NewsTab> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Skelaton(
       tabController: _tabController,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 95),
-          child: TabBarView(
-            controller: _tabController,
-            children: const [
-              HomeTab(),
-              SecondaryTab(category: 3),
-              SecondaryTab(category: 4),
-              SecondaryTab(category: 6),
-              SecondaryTab(category: 5),
-              SecondaryTab(category: 1),
-              SecondaryTab(category: 55),
-            ],
-          ),
-        ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [
+          HomeTab(),
+          SecondaryTab(category: 3),
+          SecondaryTab(category: 4),
+          SecondaryTab(category: 6),
+          SecondaryTab(category: 5),
+          SecondaryTab(category: 1),
+          SecondaryTab(category: 55),
+        ],
       ),
       bottom: TabBar(
         padding: const EdgeInsets.all(3),

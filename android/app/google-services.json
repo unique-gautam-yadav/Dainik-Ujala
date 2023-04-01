@@ -1,41 +1,34 @@
 {
   "project_info": {
-    "project_number": "945933242150",
-    "project_id": "newsapp-e9741",
-    "storage_bucket": "newsapp-e9741.appspot.com"
+    "project_number": "8188421520",
+    "project_id": "dainik-ujala-live",
+    "storage_bucket": "dainik-ujala-live.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:945933242150:android:664aa1a7a2511ce8d3fbe7",
+        "mobilesdk_app_id": "1:8188421520:android:7e298af0ee3373f679ff15",
         "android_client_info": {
           "package_name": "com.dainikujala.live"
         }
       },
       "oauth_client": [
         {
-          "client_id": "945933242150-3mcdhd7nbc884u4kcqjhs3569q9pdjos.apps.googleusercontent.com",
+          "client_id": "8188421520-t568q2uuju94e11e7eieq2m0h373s2eg.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAkAFsQVggAgp8ZadjWWWF_oFmN7rxpjaE"
+          "current_key": "AIzaSyBC9zwqNU3YyR0exxtIIKg0Spr5EncKmW4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "945933242150-3mcdhd7nbc884u4kcqjhs3569q9pdjos.apps.googleusercontent.com",
+              "client_id": "8188421520-t568q2uuju94e11e7eieq2m0h373s2eg.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "945933242150-n4btg8ovhfurpotvpaiotjkhavdhkkve.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.dainikUjala"
-              }
             }
           ]
         }

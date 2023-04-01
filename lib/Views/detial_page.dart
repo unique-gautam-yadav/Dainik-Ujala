@@ -5,10 +5,10 @@ import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:image_downloader/image_downloader.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zoom_widget/zoom_widget.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({
@@ -30,7 +30,7 @@ class _DetailPageState extends State<DetailPage> {
           sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
       log("Done");
     } catch (e) {
-      // print(e);
+      log(e.toString());
     }
     log("bbasdk");
   }
@@ -70,10 +70,11 @@ class _DetailPageState extends State<DetailPage> {
             alignment: Alignment.topCenter,
             child: Container(
               decoration: const BoxDecoration(
-                  image: DecorationImage(
-                opacity: .25,
-                image: AssetImage("assets/images/logo.png"),
-              )),
+                image: DecorationImage(
+                  opacity: .25,
+                  image: AssetImage("assets/images/logo.png"),
+                ),
+              ),
               child: SingleChildScrollView(
                   child: Column(
                 children: [
@@ -81,6 +82,12 @@ class _DetailPageState extends State<DetailPage> {
                     tag: Key("News__${widget.data.id.toString()}"),
                     child: GestureDetector(
                       onTap: () {
+                        // showModalBottomSheet(
+                        //   enableDrag: false,
+                        //   context: context,
+                        //   builder: (context) =>
+                        //       ShowImage(url: widget.data.urlToImage),
+                        // );
                         Navigator.push(
                           context,
                           PageRouteBuilder(
@@ -92,7 +99,6 @@ class _DetailPageState extends State<DetailPage> {
                               const begin = Offset(0.0, 1.0);
                               const end = Offset.zero;
                               const curve = Curves.ease;
-
                               var tween = Tween(begin: begin, end: end)
                                   .chain(CurveTween(curve: curve));
                               return SlideTransition(
@@ -133,6 +139,12 @@ class _DetailPageState extends State<DetailPage> {
                         top: 0, left: 8, right: 8, bottom: 80),
                     child: HtmlWidget(
                       onTapImage: (p0) {
+                        // showModalBottomSheet(
+                        //   enableDrag: false,
+                        //   context: context,
+                        //   builder: (context) =>
+                        //       ShowImage(url: p0.sources.first.url),
+                        // );
                         Navigator.push(
                           context,
                           PageRouteBuilder(
@@ -144,7 +156,6 @@ class _DetailPageState extends State<DetailPage> {
                               const begin = Offset(0.0, 1.0);
                               const end = Offset.zero;
                               const curve = Curves.ease;
-
                               var tween = Tween(begin: begin, end: end)
                                   .chain(CurveTween(curve: curve));
                               return SlideTransition(
@@ -228,76 +239,113 @@ class _ShowImageState extends State<ShowImage> {
     bool downloading = false;
     bool downloadError = false;
 
-    return Scaffold(
-      appBar: AppBar(actions: [
-        StatefulBuilder(
-          builder: (context, setS) {
-            return IconButton(
-              onPressed: () async {
-                if (!downloading && !downloaded) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Starting downloading..."),
-                    ),
-                  );
-                  setS(() {
-                    downloading = true;
-                  });
-                  String? res = await ImageDownloader.downloadImage(widget.url);
-                  log("$res");
-                  if (context.mounted) {
-                    if (res != null) {
-                      ScaffoldMessenger.of(context).clearSnackBars();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Image downloaded"),
-                        ),
-                      );
-                      setS(() {
-                        downloaded = true;
-                        downloading = false;
-                      });
-                    } else {
-                      setState(() {
-                        downloadError = true;
-                        downloaded = false;
-                        downloading = false;
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Something went wrong"),
-                        ),
-                      );
-                    }
-                  }
-                }
-              },
-              icon: downloading
-                  ? const Icon(Icons.downloading_rounded)
-                  : downloaded
-                      ? const Icon(Icons.download_done_rounded)
-                      : downloadError
-                          ? const Icon(Icons.file_download_off_rounded)
-                          : const Icon(Icons.download_rounded),
-            );
-          },
-        )
-      ]),
-      body: Container(
-          decoration:
-              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
-          constraints:
-              BoxConstraints.expand(height: MediaQuery.of(context).size.height),
-          child: Stack(
+    return Material(
+      child: SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Positioned(
-                  child: PhotoView(
-                backgroundDecoration: BoxDecoration(
-                    color: Theme.of(context).scaffoldBackgroundColor),
-                imageProvider: NetworkImage(widget.url),
-              )),
+              SizedBox(
+                height: 55,
+                width: MediaQuery.of(context).size.width,
+                child: ButtonBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                    StatefulBuilder(
+                      builder: (context, setState) {
+                        return IconButton(
+                          onPressed: () async {
+                            if (!downloading && !downloaded) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Starting downloading..."),
+                                ),
+                              );
+                              setState(() {
+                                downloading = true;
+                              });
+                              String? res = await ImageDownloader.downloadImage(
+                                  widget.url);
+                              log("$res");
+                              if (context.mounted) {
+                                if (res != null) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Image downloaded"),
+                                    ),
+                                  );
+                                  setState(() {
+                                    downloaded = true;
+                                    downloading = false;
+                                  });
+                                } else {
+                                  setState(() {
+                                    downloadError = true;
+                                    downloaded = false;
+                                    downloading = false;
+                                  });
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Something went wrong"),
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
+                          icon: downloading
+                              ? const Icon(Icons.downloading_rounded)
+                              : downloaded
+                                  ? const Icon(Icons.download_done_rounded)
+                                  : downloadError
+                                      ? const Icon(
+                                          Icons.file_download_off_rounded)
+                                      : const Icon(Icons.download_rounded),
+                        );
+                      },
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        child: Zoom(
+                          backgroundColor: Theme.of(context)
+                              .scaffoldBackgroundColor
+                              .withOpacity(.7),
+                          child: CachedNetworkImage(
+                            imageUrl: widget.url,
+                            progressIndicatorBuilder: (context, url, progress) {
+                              return CircularProgressIndicator(
+                                value: progress.progress,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
-          )),
+          ),
+        ),
+      ),
     );
   }
 }

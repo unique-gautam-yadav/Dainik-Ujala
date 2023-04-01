@@ -70,10 +70,50 @@ class _HomeTabState extends State<HomeTab> {
     _loadNews();
   }
 
+  _handleReload() async {
+    setState(() {
+      pageNo = 1;
+    });
+    Iterable<NewsArtical> d = await FetchData.callApi(page: 1);
+
+    setState(() {
+      sliderItems.clear();
+    });
+    if (mounted) {
+      setState(() {
+        for (int i = 0; i < d.length; i++) {
+          Widget one = RoundedImage(
+            artical: d.elementAt(i),
+          );
+          sliderItems.add(one);
+        }
+      });
+    }
+    setState(() {
+      if (d.isNotEmpty) {
+        for (int i = 0; i < d.length; i++) {
+          Widget one = Article(data: d.elementAt(i), curIndex: i);
+          newsItems.add(one);
+        }
+        pageNo++;
+      } else {
+        // print("Data Ended");
+        hasMore = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
-      return ListView(
+    return RefreshIndicator(
+      onRefresh: () async {
+        await _handleReload();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(const SnackBar(content: Text("Page refreshed")));
+        }
+      },
+      child: ListView(
         controller: scrollController,
         children: [
           Styled.widget(
@@ -135,19 +175,9 @@ class _HomeTabState extends State<HomeTab> {
                     size: 50,
                   ))
               : const SizedBox()
-          // SliverOverlapAbsorber(
-          //   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-          //   sliver: SliverList(
-          //     delegate: SliverChildListDelegate(
-          //       [
-
-          //       ],
-          //     ),
-          //   ),
-          // )
         ],
-      );
-    });
+      ),
+    );
   }
 
   @override
