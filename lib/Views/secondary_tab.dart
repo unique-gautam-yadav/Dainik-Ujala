@@ -48,14 +48,11 @@ class _SecondaryTabState extends State<SecondaryTab> {
     });
     Iterable<NewsArtical> d =
         await FetchData.callApi(category: widget.category, page: pageNo);
-    if (d.isNotEmpty) {
-      setState(() {
-        newsItems.clear();
-      });
-    }
+
     if (mounted) {
       setState(() {
         if (d.isNotEmpty) {
+          newsItems.clear();
           for (int i = 0; i < d.length; i++) {
             Widget one = Article(data: d.elementAt(i), curIndex: i);
             newsItems.add(one);

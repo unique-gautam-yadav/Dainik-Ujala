@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,6 +7,7 @@ import 'package:dainik_ujala/Views/detial_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -285,6 +287,38 @@ class Skelaton extends StatelessWidget {
       return DefaultTabController(
           length: 6,
           child: Scaffold(
+            // floatingActionButton: FloatingActionButton(onPressed: () async {
+            //   await Future.delayed(const Duration(seconds: 2));
+            //   try {
+            //     http.Response response = await http.post(
+            //       Uri.parse('https://fcm.googleapis.com/fcm/send'),
+            //       headers: <String, String>{
+            //         'Content-Type': 'application/json; charset=UTF-8',
+            //         'Authorization':
+            //             'key=AAAAAegRZZA:APA91bFVSfaC3HCQZ64J0kaD49RGoxiN15TcgryaB-FvKY50DJmEFmlRa0nQQmFOLz5LyosanHu1WkxuhXzCDtEHZfNn8TvxxV6XJpxq1WknKwSpBN82akfiYIscfEEL6F0kRQ7b-1WZ',
+            //       },
+            //       body: jsonEncode(
+            //         <String, dynamic>{
+            //           'notification': <String, dynamic>{
+            //             'body': 'test notification from admin app',
+            //             'title': 'Hello 😋',
+            //           },
+            //           'priority': 'high',
+            //           'data': <String, dynamic>{
+            //             'imgUrl':
+            //                 'https://images.unsplash.com/photo-1680399524821-d4e6b225b0ee?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
+            //             'url': 'https://www.google.com/'
+            //           },
+            //           'to': '/topics/news',
+            //         },
+            //       ),
+            //     );
+            //     response;
+            //     print("Sent Notification");
+            //   } catch (e) {
+            //     print(e.toString());
+            //   }
+            // }),
             appBar: AppBar(
               actions: [
                 IconButton(

@@ -78,6 +78,7 @@ class _HomeTabState extends State<HomeTab> {
 
     setState(() {
       sliderItems.clear();
+      newsItems.clear();
     });
     if (mounted) {
       setState(() {

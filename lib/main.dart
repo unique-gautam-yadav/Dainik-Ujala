@@ -1,86 +1,65 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:dainik_ujala/UI%20Components/themes.dart';
-import 'package:dainik_ujala/Views/main_page.dart';
-import 'package:dainik_ujala/Views/splash_screen.dart';
-import 'package:flutter/foundation.dart';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'Backend/providers.dart';
+import 'UI%20Components/themes.dart';
+import 'Views/main_page.dart';
+import 'Views/splash_screen.dart';
 import 'firebase_options.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:rxdart/rxdart.dart';
 
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  await Firebase.initializeApp();
+Future<void> handleBackgroundNotification(RemoteMessage message) async {
+  String? title = message.notification!.title;
+  String? body = message.notification!.body;
+  String? image = message.data['imgUrl'];
+  String? newsUrl = message.data['url'];
 
-  log("Handling a background message: ${message.messageId}");
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: 01,
+      channelKey: 'noti',
+      title: title,
+      body: body,
+      wakeUpScreen: true,
+      notificationLayout: image != null
+          ? NotificationLayout.BigPicture
+          : NotificationLayout.Default,
+    ),
+  );
+  AwesomeNotifications().actionStream.listen((event) {
+    // Uri? uri = Uri.tryParse(newsUrl ?? "");
+    log("have to listen about $newsUrl");
+    //
+  });
 }
 
-
-final _messageStreamController = BehaviorSubject<RemoteMessage>();
-
 void main() async {
+  AwesomeNotifications().initialize(null, [
+    NotificationChannel(
+      channelKey: 'noti',
+      channelName: 'Notifications Channel',
+      channelDescription: 'Channel which will be used for notifications',
+      defaultColor: Colors.deepOrange.shade700,
+      ledColor: Colors.white,
+      importance: NotificationImportance.Max,
+      defaultRingtoneType: DefaultRingtoneType.Notification,
+    )
+  ]);
+
+  FirebaseMessaging.onBackgroundMessage(handleBackgroundNotification);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  /// Step 1 [Reuest Permission]
-  final messaging = FirebaseMessaging.instance;
-
-  final settings = await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-
-  if (kDebugMode) {
-    log('Permission granted: ${settings.authorizationStatus}');
-  }
-
-  /// Step 2 [Register with FCM]
-  // It requests a registration token for sending messages to users from your App server or other trusted server environment.
-  String? token = await messaging.getToken();
-
-  if (kDebugMode) {
-    log('Registration Token=$token');
-  }
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    log('Got a message whilst in the foreground!');
-    log('Message data: ${message.data}');
-
-    if (message.notification != null) {
-      log('Message also contained a notification: ${message.notification}');
-    }
-  });
-
-  /// Step 3 [Set up foreground message handler]
-
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (kDebugMode) {
-      print('Handling a foreground message: ${message.messageId}');
-      print('Message data: ${message.data}');
-      print('Message notification: ${message.notification?.title}');
-      print('Message notification: ${message.notification?.body}');
-    }
-
-    _messageStreamController.sink.add(message);
-  });
-
-  /// Step 4 [Set up background message handler]
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+  await FirebaseMessaging.instance.subscribeToTopic("news");
   runApp(const MyApp());
 }
 
@@ -125,12 +104,13 @@ class MainScreenState extends State<MainScreen> {
         if (initialURI.toString().toLowerCase() ==
                 "https://dainikujala.live/" &&
             initialURI.toString().toLowerCase() == "https://dainikujala.live") {
-          // ignore: use_build_context_synchronously
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
-              ));
+          if (context.mounted) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ));
+          }
         }
         if (initialURI != null) {
           log("Initial URI received ${initialURI.toString()}");
@@ -172,6 +152,37 @@ class MainScreenState extends State<MainScreen> {
     if (haveToHandleURL) {
       _initURIHandler();
     }
+    FirebaseMessaging.onMessage.listen((message) {
+      String? title = message.notification!.title;
+      String? body = message.notification!.body;
+      String? image = message.data['imgUrl'];
+      String? newsUrl = message.data['url'];
+
+      AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 01,
+          channelKey: 'noti',
+          title: title,
+          body: body,
+          wakeUpScreen: true,
+          notificationLayout: image != null
+              ? NotificationLayout.BigPicture
+              : NotificationLayout.Default,
+          bigPicture: image,
+        ),
+      );
+      AwesomeNotifications().actionStream.listen((event) {
+        Uri? uri = Uri.tryParse(newsUrl ?? "");
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => SplashScreen(
+              initialURI: uri,
+            ),
+          ),
+        );
+      });
+    });
   }
 
   @override
