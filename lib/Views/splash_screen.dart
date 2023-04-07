@@ -25,11 +25,13 @@ class _SplashScreenState extends State<SplashScreen> {
           res == ConnectivityResult.ethernet) {
         if (widget.initialURI == null ||
             widget.initialURI.toString().split("/").length < 3) {
-          return Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
-              ));
+          if (mounted) {
+            return Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ));
+          }
         } else {
           return Navigator.pushReplacement(
               context,
