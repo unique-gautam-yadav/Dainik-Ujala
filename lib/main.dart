@@ -60,6 +60,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FirebaseMessaging.instance.subscribeToTopic("news");
+  await FirebaseMessaging.instance.subscribeToTopic("media");
+  await FirebaseMessaging.instance.subscribeToTopic("version2");
+
   runApp(const MyApp());
 }
 
