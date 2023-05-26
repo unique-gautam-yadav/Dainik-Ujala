@@ -24,8 +24,12 @@ class _SecondaryTabState extends State<SecondaryTab> {
   ScrollController scrollController = ScrollController();
 
   _loadNews() async {
-    Iterable<NewsArtical> d =
-        await FetchData.callApi(category: widget.category, page: pageNo);
+    Iterable<NewsArtical> d = await FetchData.callApi(
+      category: widget.category,
+      page: pageNo,
+      context: context,
+      mounted: mounted,
+    );
     if (mounted) {
       setState(() {
         if (d.isNotEmpty) {
@@ -46,8 +50,12 @@ class _SecondaryTabState extends State<SecondaryTab> {
     setState(() {
       pageNo = 1;
     });
-    Iterable<NewsArtical> d =
-        await FetchData.callApi(category: widget.category, page: pageNo);
+    Iterable<NewsArtical> d = await FetchData.callApi(
+      category: widget.category,
+      page: pageNo,
+      context: context,
+      mounted: mounted,
+    );
 
     if (mounted) {
       setState(() {
@@ -75,47 +83,55 @@ class _SecondaryTabState extends State<SecondaryTab> {
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        await _handleRefresh();
-        if (context.mounted) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text("Page refreshed")));
-        }
-      },
-      child: SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onPanDown: (details) {
-                Future.delayed(const Duration(seconds: 1)).then((value) {
-                  if (scrollController.hasClients) {
-                    if (scrollController.position.maxScrollExtent <=
-                        scrollController.offset + 500) {
-                      _loadNews();
-                    }
-                  }
-                });
-              },
+    return newsItems.isNotEmpty
+        ? RefreshIndicator(
+            onRefresh: () async {
+              newsItems.clear();
+              await _handleRefresh();
+            },
+            child: SingleChildScrollView(
+              controller: scrollController,
               child: Column(
-                children: newsItems,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onPanDown: hasMore
+                        ? (details) {
+                            Future.delayed(const Duration(seconds: 1))
+                                .then((value) {
+                              if (scrollController.hasClients) {
+                                if (scrollController.position.maxScrollExtent <=
+                                    scrollController.offset + 500) {
+                                  _loadNews();
+                                }
+                              }
+                            });
+                          }
+                        : null,
+                    child: Column(
+                      children: newsItems,
+                    ),
+                  ),
+                  hasMore
+                      ? Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: SpinKitSpinningLines(
+                            color:
+                                Theme.of(context).textTheme.bodyLarge!.color!,
+                            size: 50,
+                          ))
+                      : const SizedBox.shrink()
+                ],
               ),
             ),
-            hasMore
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SpinKitSpinningLines(
-                      color: Theme.of(context).textTheme.bodyLarge!.color!,
-                      size: 50,
-                    ))
-                : const SizedBox()
-          ],
-        ),
-      ),
-    );
+          )
+        : Center(
+            child: SpinKitSpinningLines(
+              color: Theme.of(context).textTheme.bodyLarge!.color!,
+              size: 50,
+            ),
+          );
   }
 
   @override

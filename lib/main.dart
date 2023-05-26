@@ -12,7 +12,7 @@ import 'package:uni_links/uni_links.dart';
 import 'Backend/providers.dart';
 import 'UI%20Components/themes.dart';
 import 'Views/main_page.dart';
-import 'Views/splash_screen.dart';
+import 'Views/redirected_screen.dart';
 import 'firebase_options.dart';
 
 Future<void> handleBackgroundNotification(RemoteMessage message) async {
@@ -59,9 +59,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  await FirebaseMessaging.instance.subscribeToTopic("news");
-  await FirebaseMessaging.instance.subscribeToTopic("media");
-  await FirebaseMessaging.instance.subscribeToTopic("version2");
+  FirebaseMessaging.instance.subscribeToTopic("news");
+  FirebaseMessaging.instance.subscribeToTopic("media");
+  FirebaseMessaging.instance.subscribeToTopic("version2-1");
 
   runApp(const MyApp());
 }
@@ -140,12 +140,14 @@ class MainScreenState extends State<MainScreen> {
   }
 
   goAway(Uri? uri) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SplashScreen(initialURI: uri),
-      ),
-    );
+    if (uri != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RedirectedPage(initialURI: uri),
+        ),
+      );
+    }
   }
 
   @override
@@ -178,7 +180,7 @@ class MainScreenState extends State<MainScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => SplashScreen(
+            builder: (_) => RedirectedPage(
               initialURI: uri,
             ),
           ),
@@ -189,6 +191,6 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const SplashScreen();
+    return const HomePage();
   }
 }

@@ -1,27 +1,118 @@
 import 'dart:developer';
+import 'dart:ui';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dainik_ujala/Backend/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:image_downloader/image_downloader.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:zoom_widget/zoom_widget.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({
     super.key,
     required this.data,
+    required this.bri,
   });
   final NewsArtical data;
+  final Brightness bri;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
-class _DetailPageState extends State<DetailPage> {
+class _DetailPageState extends State<DetailPage>
+    with SingleTickerProviderStateMixin {
+  String css = """
+<style> 
+@keyframes universe {
+  0% {
+    transform: rotate(0deg) scale(var(--scale)); }
+  100% {
+    transform: rotate(-360deg) scale(var(--scale)); } }
+
+.universe, .universe > div {
+  --scale: 1;
+  height: 100px;
+  width: 100px;
+  position: relative;
+  animation: linear universe 9s infinite; }
+  .universe:before, .universe > div:before {
+    content: '';
+    display: block;
+    height: 100px;
+    width: 50px;
+    background: transparent;
+    border-radius: 50px 0 0 50px;
+    border: none;
+    border-bottom: 5px solid var(--primary);
+    border-left: 2px solid var(--primary);
+    border-top: 0 solid var(--primary);
+    opacity: 0.3; }
+  .universe:after, .universe > div:after {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 38px;
+    left: 38px;
+    height: 24px;
+    width: 24px;
+    background: var(--primary);
+    border-radius: 16.66667px; }
+
+.universe > div:nth-child(1) {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  width: 50px;
+  height: 50px;
+  animation: linear universe 7s infinite; }
+  .universe > div:nth-child(1):before {
+    height: 50px;
+    width: 25px;
+    border-bottom: 4px solid var(--primary);
+    border-left: 2px solid var(--primary); }
+  .universe > div:nth-child(1):after {
+    top: 44px;
+    left: 22px;
+    width: 8.33333px;
+    height: 8.33333px;
+    background: var(--secondary); }
+
+.universe > div:nth-child(2) {
+  --scale: .333;
+  top: -52.5%; }
+  .universe > div:nth-child(2):before {
+    border-bottom: 12.5px solid var(--primary);
+    border-left: 3.33333px solid var(--primary); }
+  .universe > div:nth-child(2):after {
+    top: 29px;
+    left: 29px;
+    width: 42px;
+    height: 42px;
+    border-radius: 29px;
+    background: var(--secondary); }
+  .universe > div:nth-child(2) > div {
+    position: absolute;
+    background: var(--secondary);
+    width: 20px;
+    height: 20px;
+    bottom: -5.55556px;
+    left: 40px;
+    border-radius: 10px; 
+  }
+
+  #loading{
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+</style>
+""";
+
   _handleShare(String url, String title) async {
     log("askd");
     final box = context.findRenderObject() as RenderBox?;
@@ -41,310 +132,320 @@ class _DetailPageState extends State<DetailPage> {
     return await launchUrl(url);
   }
 
+  late WebViewController controller;
+
+  late AnimationController bannerController;
+  late Animation<double> blur;
+  late Animation<double> position;
+
+  bool hasBanner = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      precacheImage(const AssetImage("assets/images/logo.png"), context);
+    });
+
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            _handleUrlTap(request.url);
+            return NavigationDecision.prevent;
+          },
+        ),
+      )
+      ..setBackgroundColor(const Color(0x00000000))
+      ..loadHtmlString("""
+                  <body>
+                    <div id="loading">
+                      <div>
+                        <div class="universe">
+                          <div>
+                            <div></div>
+                          </div>
+                          <div>
+                            <div></div>
+                          </div>
+                        </div>
+                        <br/>
+                        Loading...
+                      </div>
+                    </div>
+                    
+                    <img src="${widget.data.urlToImage}" width="100%">
+                    <br/> 
+                    <div class="cont">
+                      <p class="title">
+                          ${widget.data.title}
+                      </p>
+                      <hr/>
+                        ${widget.data.content}
+                    </div>
+                    <br/><br/><br/><br/>
+                  </body>
+
+                  $css
+
+      <style>
+
+        .cont img{
+          width: calc(100% - 50px);
+          padding: 25px;
+          object-fit: scale-down;
+        }
+
+        body {
+          font-size: 38px; 
+          color: 
+          ${widget.bri == Brightness.light ? "black" : "white"};
+        } 
+        
+        :root{
+            --primary: #881e43;
+            --secondary: #881e43;
+        }
+
+        .cont{
+            text-align: justify;
+            padding-left: 35px;
+            padding-right: 35px;
+        }
+
+        .title{
+          font-size : 48px;
+          font-weight : bold;
+          text-align: justify;
+        }
+
+      </style>
+
+
+    <script>
+      document.onreadystatechange = function() {
+          if (document.readyState !== "complete") {
+              document.querySelector("body").style.visibility = "hidden";
+              document.querySelector("#loading").style.visibility = "visible";
+          } else {
+            setTimeout(() => {
+              document.querySelector("#loading").style.display = "none";
+              document.querySelector("body").style.visibility = "visible";
+            }, 2000);
+          }
+      };
+    </script>
+""");
+
+    bannerController = AnimationController(
+        duration: const Duration(milliseconds: 150), vsync: this);
+
+    blur = Tween<double>(begin: 0, end: 6).animate(bannerController)
+      ..addListener(() {
+        setState(() {});
+      });
+
+    position = Tween<double>(begin: -300, end: 0).animate(bannerController)
+      ..addListener(() {
+        setState(() {});
+      });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        precacheImage(const AssetImage("assets/images/advt.jpeg"), context)
+            .whenComplete(() {
+          setState(() {
+            hasBanner = true;
+          });
+          bannerController.forward();
+        });
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _handleShare(widget.data.url, widget.data.title);
-          },
-          child: const Icon(Icons.share_outlined)),
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).brightness == Brightness.dark
-            ? const Color.fromARGB(255, 20, 27, 30)
-            : Theme.of(context).appBarTheme.backgroundColor,
-        title: SizedBox(
-          height: (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 0) * 1.5,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: HtmlWidget(
-              widget.data.title,
-              textStyle: Theme.of(context).textTheme.bodyLarge,
-            ),
-          ),
-        ),
-      ),
-      body: Stack(
+    return Material(
+      child: Stack(
         children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  opacity: .25,
-                  image: AssetImage("assets/images/logo.png"),
+          Scaffold(
+            floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  _handleShare(widget.data.url, widget.data.title);
+                },
+                child: const Icon(Icons.share_outlined)),
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).brightness == Brightness.dark
+                  ? const Color.fromARGB(255, 20, 27, 30)
+                  : Theme.of(context).appBarTheme.backgroundColor,
+              title: SizedBox(
+                height: (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 0) *
+                    1.5,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: HtmlWidget(
+                    widget.data.title,
+                    textStyle: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ),
               ),
-              child: SingleChildScrollView(
-                  child: Column(
-                children: [
-                  Hero(
-                    tag: Key("News__${widget.data.id.toString()}"),
-                    child: GestureDetector(
-                      onTap: () {
-                        // showModalBottomSheet(
-                        //   enableDrag: false,
-                        //   context: context,
-                        //   builder: (context) =>
-                        //       ShowImage(url: widget.data.urlToImage),
-                        // );
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    ShowImage(url: widget.data.urlToImage),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(0.0, 1.0);
-                              const end = Offset.zero;
-                              const curve = Curves.ease;
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-                              return SlideTransition(
-                                position: animation.drive(tween),
-                                child: child,
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fill,
-                        imageUrl: widget.data.urlToImage,
-                        placeholder: (context, url) {
-                          return Image.asset(
-                            "assets/images/logo.jpg",
-                            fit: BoxFit.fill,
-                          );
-                        },
-                        errorWidget: (context, url, error) {
-                          return Image.asset(
-                            "assets/images/logo.jpg",
-                            fit: BoxFit.fill,
-                          );
-                        },
+            ),
+            body: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        opacity: .25,
+                        image: AssetImage("assets/images/logo.png"),
+                      ),
+                    ),
+                    child: SizedBox(
+                      child: WebViewWidget(
+                        controller: controller,
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 10.0, bottom: 0, left: 8, right: 8),
-                    child: HtmlWidget(widget.data.title,
-                        textStyle: Theme.of(context).textTheme.titleLarge),
-                  ),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 0, left: 8, right: 8, bottom: 80),
-                    child: HtmlWidget(
-                      onTapImage: (p0) {
-                        // showModalBottomSheet(
-                        //   enableDrag: false,
-                        //   context: context,
-                        //   builder: (context) =>
-                        //       ShowImage(url: p0.sources.first.url),
-                        // );
-                        Navigator.push(
-                          context,
-                          PageRouteBuilder(
-                            pageBuilder:
-                                (context, animation, secondaryAnimation) =>
-                                    ShowImage(url: p0.sources.first.url),
-                            transitionsBuilder: (context, animation,
-                                secondaryAnimation, child) {
-                              const begin = Offset(0.0, 1.0);
-                              const end = Offset.zero;
-                              const curve = Curves.ease;
-                              var tween = Tween(begin: begin, end: end)
-                                  .chain(CurveTween(curve: curve));
-                              return SlideTransition(
-                                position: animation.drive(tween),
-                                child: child,
-                              );
-                            },
+                ),
+                Positioned(
+                  bottom: 0,
+                  child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(30)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            offset: const Offset(3, 0),
+                            blurRadius: 10,
                           ),
-                        );
-                      },
-                      widget.data.content,
-                      onTapUrl: (url) {
-                        return _handleUrlTap(url);
-                      },
-                    ),
-                  )
-                ],
-              )),
+                          BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            offset: const Offset(0, 3),
+                            blurRadius: 10,
+                          ),
+                          BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            offset: const Offset(-3, 0),
+                            blurRadius: 10,
+                          ),
+                          BoxShadow(
+                            color: Theme.of(context).scaffoldBackgroundColor,
+                            offset: const Offset(0, -3),
+                            blurRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                          padding: const EdgeInsets.only(
+                            top: 8,
+                            bottom: 8,
+                            left: 8,
+                            right: 12,
+                          ),
+                          child: Text(DateFormat.jm()
+                              .addPattern('; d MMMM y (EEEE)')
+                              .format(
+                                  DateTime.parse(widget.data.publishedAt))))),
+                ),
+              ],
             ),
           ),
-          Positioned(
-            bottom: 0,
-            child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius:
-                      const BorderRadius.only(topRight: Radius.circular(30)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      offset: const Offset(3, 0),
-                      blurRadius: 10,
+          hasBanner
+              ? Positioned(
+                  bottom: 0,
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(
+                        sigmaX: blur.value, sigmaY: blur.value),
+                    child: Container(
+                      color: Theme.of(context).dividerColor.withOpacity(.7),
                     ),
-                    BoxShadow(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      offset: const Offset(0, 3),
-                      blurRadius: 10,
-                    ),
-                    BoxShadow(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      offset: const Offset(-3, 0),
-                      blurRadius: 10,
-                    ),
-                    BoxShadow(
-                      color: Theme.of(context).scaffoldBackgroundColor,
-                      offset: const Offset(0, -3),
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 8,
-                      bottom: 8,
-                      left: 8,
-                      right: 12,
-                    ),
-                    child: Text(DateFormat.jm()
-                        .addPattern('; d MMMM y (EEEE)')
-                        .format(DateTime.parse(widget.data.publishedAt))))),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ShowImage extends StatefulWidget {
-  const ShowImage({super.key, required this.url});
-
-  final String url;
-
-  @override
-  State<ShowImage> createState() => _ShowImageState();
-}
-
-class _ShowImageState extends State<ShowImage> {
-  @override
-  Widget build(BuildContext context) {
-    bool downloaded = false;
-    bool downloading = false;
-    bool downloadError = false;
-
-    return Material(
-      child: SafeArea(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                height: 55,
-                width: MediaQuery.of(context).size.width,
-                child: ButtonBar(
-                  alignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(Icons.close_rounded),
-                    ),
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return IconButton(
-                          onPressed: () async {
-                            if (!downloading && !downloaded) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Starting downloading..."),
-                                ),
-                              );
-                              setState(() {
-                                downloading = true;
-                              });
-                              String? res = await ImageDownloader.downloadImage(
-                                  widget.url);
-                              log("$res");
-                              if (context.mounted) {
-                                if (res != null) {
-                                  ScaffoldMessenger.of(context)
-                                      .clearSnackBars();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Image downloaded"),
-                                    ),
-                                  );
-                                  setState(() {
-                                    downloaded = true;
-                                    downloading = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    downloadError = true;
-                                    downloaded = false;
-                                    downloading = false;
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Something went wrong"),
-                                    ),
-                                  );
-                                }
-                              }
-                            }
-                          },
-                          icon: downloading
-                              ? const Icon(Icons.downloading_rounded)
-                              : downloaded
-                                  ? const Icon(Icons.download_done_rounded)
-                                  : downloadError
-                                      ? const Icon(
-                                          Icons.file_download_off_rounded)
-                                      : const Icon(Icons.download_rounded),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).scaffoldBackgroundColor),
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        child: Zoom(
-                          backgroundColor: Theme.of(context)
-                              .scaffoldBackgroundColor
-                              .withOpacity(.7),
-                          child: CachedNetworkImage(
-                            imageUrl: widget.url,
-                            progressIndicatorBuilder: (context, url, progress) {
-                              return CircularProgressIndicator(
-                                value: progress.progress,
-                              );
-                            },
+                  ),
+                )
+              : const SizedBox.shrink(),
+          hasBanner
+              ? Positioned(
+                  right: 30,
+                  bottom: 30,
+                  child: Transform.translate(
+                    offset: Offset(position.value, 0),
+                    child: Container(
+                      height: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).dialogBackgroundColor,
+                      ),
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Flexible(
+                          child: SizedBox(
+                            height: 250,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/advt.jpeg",
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        Container(
+                          height: double.infinity,
+                          width: .5,
+                          color: Theme.of(context).dividerColor,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: SizedBox(
+                            width: 41,
+                            height: 246,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton.filledTonal(
+                                  onPressed: () {
+                                    bannerController
+                                        .reverse()
+                                        .whenCompleteOrCancel(
+                                      () {
+                                        setState(() {
+                                          hasBanner = false;
+                                        });
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.close_rounded),
+                                ),
+                                const Expanded(
+                                  child: RotatedBox(
+                                    quarterTurns: 1,
+                                    child: Center(
+                                      child: Text(
+                                        "Advertisement",
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ]),
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
+                )
+              : const SizedBox.shrink()
+        ],
       ),
     );
   }

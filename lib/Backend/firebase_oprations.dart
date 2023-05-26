@@ -8,8 +8,10 @@ class FirebaseOperations {
   static Future<List<MediaModel>> getAllPosts({int times = 1}) async {
     QuerySnapshot<Map<String, dynamic>> d =
         await mediaCollection.orderBy('timeStamp').limit(20 * times).get();
-    return List.generate(d.docs.length, (index) {
+    var data = List.generate(d.docs.length, (index) {
       return MediaModel.fromMap(d.docs.elementAt(index).data());
     });
+
+    return data;
   }
 }

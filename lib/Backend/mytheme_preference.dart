@@ -9,6 +9,6 @@ class MyThemePreferences {
 
   getTheme() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    return sharedPreferences.getBool(themeKey) ?? false;
+    return sharedPreferences.getBool(themeKey) ?? true;
   }
 }

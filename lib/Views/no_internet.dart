@@ -1,6 +1,6 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dainik_ujala/Views/splash_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class ConnectionLostScreen extends StatefulWidget {
   const ConnectionLostScreen({super.key});
@@ -11,20 +11,20 @@ class ConnectionLostScreen extends StatefulWidget {
 
 class _ConnectionLostScreenState extends State<ConnectionLostScreen> {
   @override
-  void initState() {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.wifi ||
-          result == ConnectivityResult.mobile ||
-          result == ConnectivityResult.ethernet) {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const SplashScreen(),
-            ));
-      }
-    });
-    super.initState();
-  }
+  // void initState() {
+  //   Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+  //     if (result == ConnectivityResult.wifi ||
+  //         result == ConnectivityResult.mobile ||
+  //         result == ConnectivityResult.ethernet) {
+  //       Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(
+  //             builder: (context) => const MyApp(),
+  //           ));
+  //     }
+  //   });
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class _ConnectionLostScreenState extends State<ConnectionLostScreen> {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const SplashScreen(),
+                        builder: (context) => const MyApp(),
                       ));
                 },
                 child: Text(

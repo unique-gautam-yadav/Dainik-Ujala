@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,7 +6,6 @@ import 'package:dainik_ujala/Views/detial_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:styled_widget/styled_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -57,70 +55,84 @@ class _RoundedImageState extends State<RoundedImage> {
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailPage(data: widget.artical),
-              ));
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  DetailPage(
+                data: widget.artical,
+                bri: Theme.of(context).brightness,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0.0, 1.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+                var tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: curve));
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
+          );
         },
-        child: Hero(
-          tag: Key(widget.artical.id.toString()),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Stack(
-              children: [
-                Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.width * (9 / 16),
-                      child: CachedNetworkImage(
-                        fit: BoxFit.fill,
-                        imageUrl: widget.artical.urlToImage,
-                        placeholder: (context, url) {
-                          return Image.asset(
-                            "assets/images/logo.jpg",
-                            fit: BoxFit.fill,
-                          );
-                        },
-                        errorWidget: (context, url, error) {
-                          return Image.asset(
-                            "assets/images/logo.jpg",
-                            fit: BoxFit.fill,
-                          );
-                        },
-                      ),
-                    )),
-                Positioned(
-                  bottom: 0,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            children: [
+              Positioned(
+                  top: 0,
                   left: 0,
                   right: 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.blueGrey.withOpacity(.2),
-                        border: const Border(
-                            top: BorderSide(color: Colors.blueGrey, width: 1))),
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 4, bottom: 8, left: 8, right: 2),
-                          child: HtmlWidget(
-                            widget.artical.title,
-                            textStyle: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(color: Colors.white),
-                          ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.width * (9 / 16),
+                    child: CachedNetworkImage(
+                      fit: BoxFit.fill,
+                      imageUrl: widget.artical.urlToImage,
+                      placeholder: (context, url) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                      errorWidget: (context, url, error) {
+                        return Image.asset(
+                          "assets/images/logo.jpg",
+                          fit: BoxFit.fill,
+                        );
+                      },
+                    ),
+                  )),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey.withOpacity(.2),
+                      border: const Border(
+                          top: BorderSide(color: Colors.blueGrey, width: 1))),
+                  child: ClipRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaY: 5, sigmaX: 5),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            top: 4, bottom: 8, left: 8, right: 2),
+                        child: HtmlWidget(
+                          widget.artical.title,
+                          textStyle: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       ),
@@ -155,10 +167,27 @@ class _ArticleState extends State<Article> {
       child: GestureDetector(
         onTap: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailPage(data: widget.data),
-              ));
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  DetailPage(
+                data: widget.data,
+                bri: Theme.of(context).brightness,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0.0, 1.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+                var tween = Tween(begin: begin, end: end)
+                    .chain(CurveTween(curve: curve));
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ),
+          );
         },
         child: Container(
           padding: const EdgeInsets.all(8),
@@ -170,41 +199,47 @@ class _ArticleState extends State<Article> {
               Row(
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Hero(
-                        tag: Key("News__${widget.data.id.toString()}"),
-                        child: SizedBox(
-                          width: 120,
-                          height: 70,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: CachedNetworkImage(
-                              fit: BoxFit.fill,
-                              imageUrl: widget.data.urlToImage,
-                              placeholder: (context, url) {
-                                return Image.asset(
+                      SizedBox(
+                        width: 120,
+                        height: 70,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: CachedNetworkImage(
+                            fit: BoxFit.fill,
+                            imageUrl: widget.data.urlToImage,
+                            placeholder: (context, url) {
+                              return Image.asset(
+                                "assets/images/logo.jpg",
+                                fit: BoxFit.fill,
+                              );
+                            },
+                            errorWidget: (context, url, error) {
+                              return Opacity(
+                                opacity: .8,
+                                child: Image.asset(
                                   "assets/images/logo.jpg",
                                   fit: BoxFit.fill,
-                                );
-                              },
-                              errorWidget: (context, url, error) {
-                                return Opacity(
-                                  opacity: .8,
-                                  child: Image.asset(
-                                    "assets/images/logo.jpg",
-                                    fit: BoxFit.fill,
-                                  ),
-                                );
-                              },
-                            ),
+                                ),
+                              );
+                            },
                           ),
                         ),
+                      ),
+                      Text(
+                        durationToTime(
+                          DateTime.now().difference(
+                            DateTime.parse(widget.data.publishedAt),
+                          ),
+                        ),
+                        textAlign: TextAlign.left,
                       ),
                     ],
                   ),
                   const SizedBox(width: 20),
                   Expanded(
-                    child: HtmlWidget(widget.data.title),
+                    child: HtmlWidget("<b>${widget.data.title}</b>"),
                   )
                 ],
               ),
@@ -213,21 +248,42 @@ class _ArticleState extends State<Article> {
                   : const SizedBox(),
               widget.data.categoriesStr.isNotEmpty
                   ? SizedBox(
-                      height: 45,
+                      height: 30,
                       width: MediaQuery.of(context).size.width - 100,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: widget.data.categoriesStr.length,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ArticleType(
-                                text: widget.data.categoriesStr[index]),
+                          return Row(
+                            children: [
+                              ArticleType(
+                                  text: widget.data.categoriesStr[index]),
+                              widget.data.categoriesStr.length != 1 &&
+                                      index !=
+                                          widget.data.categoriesStr.length - 1
+                                  ? Container(
+                                      margin: const EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                      ),
+                                      height: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .fontSize,
+                                      width: 3,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ],
                           );
                         },
                       ),
                     )
-                  : const SizedBox(),
+                  : const SizedBox.shrink(),
             ],
           ),
         ),
@@ -259,14 +315,17 @@ class ArticleType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 20, right: 20),
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(.3),
-        borderRadius: BorderRadius.circular(15),
+    return Center(
+        child: Text(
+      text,
+      style: TextStyle(
+        decoration: TextDecoration.underline,
+        color: Theme.of(context).colorScheme.primary,
+        decorationColor: Theme.of(context).colorScheme.primary,
+        decorationThickness: 3,
+        fontWeight: FontWeight.bold,
       ),
-      child: Center(child: Text(text)),
-    );
+    ));
   }
 }
 
@@ -287,38 +346,6 @@ class Skelaton extends StatelessWidget {
       return DefaultTabController(
           length: 6,
           child: Scaffold(
-            // floatingActionButton: FloatingActionButton(onPressed: () async {
-            //   await Future.delayed(const Duration(seconds: 2));
-            //   try {
-            //     http.Response response = await http.post(
-            //       Uri.parse('https://fcm.googleapis.com/fcm/send'),
-            //       headers: <String, String>{
-            //         'Content-Type': 'application/json; charset=UTF-8',
-            //         'Authorization':
-            //             'key=AAAAAegRZZA:APA91bFVSfaC3HCQZ64J0kaD49RGoxiN15TcgryaB-FvKY50DJmEFmlRa0nQQmFOLz5LyosanHu1WkxuhXzCDtEHZfNn8TvxxV6XJpxq1WknKwSpBN82akfiYIscfEEL6F0kRQ7b-1WZ',
-            //       },
-            //       body: jsonEncode(
-            //         <String, dynamic>{
-            //           'notification': <String, dynamic>{
-            //             'body': 'test notification from admin app',
-            //             'title': 'Hello 😋',
-            //           },
-            //           'priority': 'high',
-            //           'data': <String, dynamic>{
-            //             'imgUrl':
-            //                 'https://images.unsplash.com/photo-1680399524821-d4e6b225b0ee?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80',
-            //             'url': 'https://www.google.com/'
-            //           },
-            //           'to': '/topics/news',
-            //         },
-            //       ),
-            //     );
-            //     response;
-            //     print("Sent Notification");
-            //   } catch (e) {
-            //     print(e.toString());
-            //   }
-            // }),
             appBar: AppBar(
               actions: [
                 IconButton(
@@ -339,4 +366,29 @@ class Skelaton extends StatelessWidget {
           ));
     });
   }
+}
+
+String durationToTime(Duration duration) {
+  if (duration.inDays > 365) {
+    return "${duration.inDays ~/ 365}y";
+  }
+  if (duration.inDays > 30) {
+    return "${duration.inDays ~/ 30}mth";
+  }
+  if (duration.inDays > 7) {
+    return "${duration.inDays ~/ 7}w";
+  }
+  if (duration.inHours > 24) {
+    return "${duration.inDays}d";
+  }
+  if (duration.inMinutes > 24) {
+    return "${duration.inHours}h";
+  }
+  if (duration.inSeconds > 59) {
+    return "${duration.inMinutes}m";
+  }
+  if (duration.inSeconds < 59) {
+    return "${duration.inSeconds}s";
+  }
+  return "";
 }

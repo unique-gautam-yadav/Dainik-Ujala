@@ -23,14 +23,22 @@ class _RedirectedPageState extends State<RedirectedPage> {
     });
     String url = widget.initialURI.toString();
     String slug = url.split("/")[3];
-    Iterable<NewsArtical> data = await FetchData.callApi(page: 0, slug: slug);
+    Iterable<NewsArtical> data = await FetchData.callApi(
+      page: 0,
+      slug: slug,
+      context: context,
+      mounted: mounted,
+    );
     debugPrint("${data.length}");
     if (data.isNotEmpty) {
       //ignore: use_build_context_synchronously
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => DetailPage(data: data.elementAt(0)),
+            builder: (context) => DetailPage(
+              data: data.elementAt(0),
+              bri: Theme.of(context).brightness,
+            ),
           ));
 
       debugPrint(data.elementAt(0).title);

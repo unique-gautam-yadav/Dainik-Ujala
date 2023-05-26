@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 class NewsArtical {
@@ -45,6 +46,12 @@ class NewsArtical {
     if (categories.contains(55)) {
       categoriesStr.add("बिजनेस");
     }
+    if (categories.contains(56)) {
+      categoriesStr.add("शिक्षा / नौकरी");
+    }
+    if (categories.contains(58)) {
+      categoriesStr.add("मनोरंजन");
+    }
   }
 }
 
@@ -53,11 +60,13 @@ class MediaModel {
   String? timeStamp;
   String? path;
   String? captions;
+  bool isVideo;
   MediaModel({
     this.id,
     this.timeStamp,
     this.path,
     this.captions,
+    required this.isVideo,
   });
 
   Map<String, dynamic> toMap() {
@@ -66,6 +75,7 @@ class MediaModel {
       'timeStamp': timeStamp,
       'path': path,
       'captions': captions,
+      'isVedio': isVideo,
     };
   }
 
@@ -75,10 +85,12 @@ class MediaModel {
       timeStamp: map['timeStamp'] != null ? map['timeStamp'] as String : null,
       path: map['path'] != null ? map['path'] as String : null,
       captions: map['captions'] != null ? map['captions'] as String : null,
+      isVideo: map['isVedio'] != null ? map['isVedio'] as bool : false,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory MediaModel.fromJson(String source) => MediaModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory MediaModel.fromJson(String source) =>
+      MediaModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
