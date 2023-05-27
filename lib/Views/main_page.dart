@@ -42,10 +42,6 @@ class _HomePageState extends State<HomePage>
       ..addListener(() {
         setState(() {});
       });
-
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      precacheImage(const AssetImage('assets/images/advt3-min.jpg'), context);
-    });
   }
 
   @override
@@ -54,16 +50,6 @@ class _HomePageState extends State<HomePage>
       child: Stack(
         children: [
           Scaffold(
-            floatingActionButton: FloatingActionButton(onPressed: () {
-              precacheImage(
-                      const AssetImage('assets/images/advt3-min.jpg'), context)
-                  .then((value) {
-                setState(() {
-                  hasBanner = true;
-                });
-                bannerController.forward();
-              });
-            }),
             bottomNavigationBar: NavigationBar(
               selectedIndex: curIndex,
               destinations: const [
@@ -99,204 +85,266 @@ class _HomePageState extends State<HomePage>
                   ),
                 )
               : const SizedBox.shrink(),
-          hasBanner
-              ? Positioned(
-                  left: 30,
-                  right: 30,
-                  top: 30,
-                  bottom: 30,
-                  child: Transform.translate(
-                    offset: Offset(0, position.value),
-                    child: Center(
-                      child: Container(
-                        // height: 500,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: Theme.of(context).dialogBackgroundColor,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: 55,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const SizedBox(width: 10),
-                                  const Text("Advertisement"),
-                                  const Expanded(
-                                    child: SizedBox.shrink(),
-                                  ),
-                                  IconButton.filledTonal(
-                                    onPressed: () {
-                                      bannerController
-                                          .reverse()
-                                          .whenCompleteOrCancel(() {
-                                        setState(() {
-                                          hasBanner = false;
-                                        });
-                                      });
-                                    },
-                                    icon: const Icon(Icons.close_rounded),
-                                  ),
-                                  const SizedBox(width: 10),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              height: .5,
-                              width: double.infinity,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            Flexible(
-                                child: SizedBox(
-                                    width: double.infinity,
-                                    child: Image.asset(
-                                      "assets/images/advt3-min.jpg",
-                                      fit: BoxFit.contain,
-                                    ))),
-                            Container(
-                              height: .5,
-                              width: double.infinity,
-                              color: Theme.of(context).dividerColor,
-                            ),
-                            SizedBox(
-                              height: 55,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      elevation:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (states
-                                            .contains(MaterialState.disabled)) {
-                                          return null;
-                                        }
-                                        if (states
-                                            .contains(MaterialState.pressed)) {
-                                          return 0;
-                                        } else {
-                                          return 2;
-                                        }
-                                      }),
-                                      backgroundColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (!states
-                                            .contains(MaterialState.disabled)) {
-                                          return CupertinoColors.activeBlue;
-                                        } else {
-                                          return null;
-                                        }
-                                      }),
-                                      shadowColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (!states
-                                            .contains(MaterialState.disabled)) {
-                                          return CupertinoColors.activeBlue;
-                                        } else {
-                                          return null;
-                                        }
-                                      }),
-                                      foregroundColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (states
-                                            .contains(MaterialState.disabled)) {
-                                          return null;
-                                        } else {
-                                          return Colors.white;
-                                        }
-                                      }),
-                                      shape: MaterialStateProperty.resolveWith(
-                                          (states) {
-                                        if (states
-                                            .contains(MaterialState.pressed)) {
-                                          return BeveledRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          );
-                                        } else {
-                                          return BeveledRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          );
-                                        }
-                                      }),
-                                    ),
-                                    onPressed: () {},
-                                    child: const Text("Open"),
-                                  ),
-                                  ElevatedButton(
-                                    style: ButtonStyle(
-                                      elevation:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (states
-                                            .contains(MaterialState.disabled)) {
-                                          return null;
-                                        }
-                                        if (states
-                                            .contains(MaterialState.pressed)) {
-                                          return 0;
-                                        } else {
-                                          return 2;
-                                        }
-                                      }),
-                                      backgroundColor:
-                                          MaterialStateProperty.resolveWith(
-                                              (states) {
-                                        if (!states
-                                            .contains(MaterialState.disabled)) {
-                                          return null;
-                                        } else {
-                                          return null;
-                                        }
-                                      }),
-                                      shape: MaterialStateProperty.resolveWith(
-                                          (states) {
-                                        if (states
-                                            .contains(MaterialState.pressed)) {
-                                          return BeveledRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          );
-                                        } else {
-                                          return BeveledRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                          );
-                                        }
-                                      }),
-                                    ),
-                                    onPressed: () {
-                                      bannerController
-                                          .reverse()
-                                          .whenCompleteOrCancel(() {
-                                        setState(() {
-                                          hasBanner = false;
-                                        });
-                                      });
-                                    },
-                                    child: const Text("Close"),
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()
+          MainScreenBanner(
+            hide: () {
+              bannerController.reverse().whenCompleteOrCancel(() {
+                setState(() {
+                  hasBanner = false;
+                });
+              });
+            },
+            show: () {
+              setState(() {
+                hasBanner = true;
+              });
+              bannerController.forward();
+            },
+            position: position,
+            hasBanner: hasBanner,
+          )
         ],
       ),
     );
+  }
+}
+
+class MainScreenBanner extends StatefulWidget {
+  const MainScreenBanner({
+    super.key,
+    required this.hide,
+    required this.show,
+    required this.position,
+    required this.hasBanner,
+  });
+
+  final VoidCallback hide;
+  final VoidCallback show;
+  final Animation<double> position;
+  final bool hasBanner;
+
+  @override
+  State<MainScreenBanner> createState() => _MainScreenBannerState();
+}
+
+class _MainScreenBannerState extends State<MainScreenBanner> {
+  bool pressed = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        precacheImage(const AssetImage("assets/images/advt3-min.jpg"), context)
+            .then((value) {
+          widget.show();
+        });
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.hasBanner
+        ? Positioned(
+            left: 30,
+            right: 30,
+            top: 30,
+            bottom: 30,
+            child: Transform.translate(
+              offset: Offset(0, widget.position.value),
+              child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).dialogBackgroundColor,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 55,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 10),
+                            const Text("Advertisement"),
+                            const Expanded(
+                              child: SizedBox.shrink(),
+                            ),
+                            IconButton.filledTonal(
+                              onPressed: () {
+                                widget.hide();
+                              },
+                              icon: const Icon(Icons.close_rounded),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: .5,
+                        width: double.infinity,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      Flexible(
+                        child: SizedBox(
+                            width: double.infinity,
+                            child: GestureDetector(
+                              onTap: () {
+                                widget.hide();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    behavior: SnackBarBehavior.floating,
+                                    content: Text(
+                                        "Advertisement description here!!"),
+                                  ),
+                                );
+                              },
+                              onTapDown: (details) {
+                                setState(() {
+                                  pressed = true;
+                                });
+                              },
+                              onTapUp: (details) {
+                                setState(() {
+                                  pressed = false;
+                                });
+                              },
+                              onTapCancel: () {
+                                setState(() {
+                                  pressed = false;
+                                });
+                              },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 100),
+                                foregroundDecoration: BoxDecoration(
+                                  color: pressed
+                                      ? Theme.of(context)
+                                          .dividerColor
+                                          .withOpacity(.4)
+                                      : Colors.transparent,
+                                ),
+                                child: Image.asset(
+                                  "assets/images/advt3-min.jpg",
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            )),
+                      ),
+                      Container(
+                        height: .5,
+                        width: double.infinity,
+                        color: Theme.of(context).dividerColor,
+                      ),
+                      SizedBox(
+                        height: 55,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                elevation:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.disabled)) {
+                                    return null;
+                                  }
+                                  if (states.contains(MaterialState.pressed)) {
+                                    return 0;
+                                  } else {
+                                    return 2;
+                                  }
+                                }),
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (!states
+                                      .contains(MaterialState.disabled)) {
+                                    return CupertinoColors.activeBlue;
+                                  } else {
+                                    return null;
+                                  }
+                                }),
+                                shadowColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (!states
+                                      .contains(MaterialState.disabled)) {
+                                    return CupertinoColors.activeBlue;
+                                  } else {
+                                    return null;
+                                  }
+                                }),
+                                foregroundColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.disabled)) {
+                                    return null;
+                                  } else {
+                                    return Colors.white;
+                                  }
+                                }),
+                                shape:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.pressed)) {
+                                    return BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    );
+                                  } else {
+                                    return BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    );
+                                  }
+                                }),
+                              ),
+                              onPressed: () {},
+                              child: const Text("Open"),
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                elevation:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.disabled)) {
+                                    return null;
+                                  }
+                                  if (states.contains(MaterialState.pressed)) {
+                                    return 0;
+                                  } else {
+                                    return 2;
+                                  }
+                                }),
+                                backgroundColor:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (!states
+                                      .contains(MaterialState.disabled)) {
+                                    return null;
+                                  } else {
+                                    return null;
+                                  }
+                                }),
+                                shape:
+                                    MaterialStateProperty.resolveWith((states) {
+                                  if (states.contains(MaterialState.pressed)) {
+                                    return BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    );
+                                  } else {
+                                    return BeveledRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    );
+                                  }
+                                }),
+                              ),
+                              onPressed: () {
+                                widget.hide();
+                              },
+                              child: const Text("Close"),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }
 

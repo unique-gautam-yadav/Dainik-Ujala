@@ -381,7 +381,7 @@ String durationToTime(Duration duration) {
   if (duration.inHours > 24) {
     return "${duration.inDays}d";
   }
-  if (duration.inMinutes > 24) {
+  if (duration.inMinutes > 59) {
     return "${duration.inHours}h";
   }
   if (duration.inSeconds > 59) {

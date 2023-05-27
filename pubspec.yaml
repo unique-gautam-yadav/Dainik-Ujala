@@ -37,6 +37,8 @@ dependencies:
   flutter_native_splash: ^2.2.19
   video_thumbnail: ^0.5.3
   video_player: ^2.6.1
+  sqflite: ^2.2.8+4
+  path: ^1.8.3
 
 flutter_native_splash:
   image: assets/images/logo_play.png

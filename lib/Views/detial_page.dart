@@ -246,21 +246,10 @@ class _DetailPageState extends State<DetailPage>
         setState(() {});
       });
 
-    position = Tween<double>(begin: -300, end: 0).animate(bannerController)
+    position = Tween<double>(begin: -355, end: 0).animate(bannerController)
       ..addListener(() {
         setState(() {});
       });
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Future.delayed(const Duration(seconds: 5)).then((value) {
-        precacheImage(const AssetImage("assets/images/advt.jpeg"), context)
-            .whenComplete(() {
-          setState(() {
-            hasBanner = true;
-          });
-          bannerController.forward();
-        });
-      });
-    });
   }
 
   @override
@@ -371,82 +360,161 @@ class _DetailPageState extends State<DetailPage>
                   ),
                 )
               : const SizedBox.shrink(),
-          hasBanner
-              ? Positioned(
-                  right: 30,
-                  bottom: 30,
-                  child: Transform.translate(
-                    offset: Offset(position.value, 0),
-                    child: Container(
-                      height: 250,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).dialogBackgroundColor,
-                      ),
-                      child: Row(mainAxisSize: MainAxisSize.min, children: [
-                        Flexible(
-                          child: SizedBox(
-                            height: 250,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(10),
-                                bottomLeft: Radius.circular(10),
-                              ),
-                              child: Image.asset(
-                                "assets/images/advt.jpeg",
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          height: double.infinity,
-                          width: .5,
-                          color: Theme.of(context).dividerColor,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(2),
-                          child: SizedBox(
-                            width: 41,
-                            height: 246,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton.filledTonal(
-                                  onPressed: () {
-                                    bannerController
-                                        .reverse()
-                                        .whenCompleteOrCancel(
-                                      () {
-                                        setState(() {
-                                          hasBanner = false;
-                                        });
-                                      },
-                                    );
-                                  },
-                                  icon: const Icon(Icons.close_rounded),
-                                ),
-                                const Expanded(
-                                  child: RotatedBox(
-                                    quarterTurns: 1,
-                                    child: Center(
-                                      child: Text(
-                                        "Advertisement",
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ]),
-                    ),
-                  ),
-                )
-              : const SizedBox.shrink()
+          DetailPageBanner(
+            position: position,
+            hasBanner: hasBanner,
+            hide: () {
+              bannerController.reverse().whenCompleteOrCancel(
+                () {
+                  setState(() {
+                    hasBanner = false;
+                  });
+                },
+              );
+            },
+            show: () {
+              setState(() {
+                hasBanner = true;
+              });
+              bannerController.forward();
+            },
+          )
         ],
       ),
     );
+  }
+}
+
+class DetailPageBanner extends StatefulWidget {
+  const DetailPageBanner({
+    super.key,
+    required this.position,
+    required this.hasBanner,
+    required this.hide,
+    required this.show,
+  });
+
+  final Animation<double> position;
+  final bool hasBanner;
+  final VoidCallback hide;
+  final VoidCallback show;
+
+  @override
+  State<DetailPageBanner> createState() => _DetailPageBannerState();
+}
+
+class _DetailPageBannerState extends State<DetailPageBanner> {
+  bool pressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        precacheImage(const AssetImage("assets/images/advt.jpeg"), context)
+            .then(
+          (value) {
+            widget.show();
+          },
+        );
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.hasBanner
+        ? Positioned(
+            right: 30,
+            bottom: 30,
+            child: Transform.translate(
+              offset: Offset(widget.position.value, 0),
+              child: Container(
+                height: 250,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).dialogBackgroundColor,
+                ),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Flexible(
+                    child: SizedBox(
+                      height: 250,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
+                        child: GestureDetector(
+                          onTapDown: (details) {
+                            setState(() {
+                              pressed = true;
+                            });
+                          },
+                          onTapUp: (details) {
+                            setState(() {
+                              pressed = false;
+                            });
+                          },
+                          onTapCancel: () {
+                            setState(() {
+                              pressed = false;
+                            });
+                          },
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 150),
+                            foregroundDecoration: BoxDecoration(
+                              color: pressed
+                                  ? Theme.of(context)
+                                      .dividerColor
+                                      .withOpacity(.4)
+                                  : Colors.transparent,
+                            ),
+                            child: Image.asset(
+                              "assets/images/advt.jpeg",
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: double.infinity,
+                    width: .5,
+                    color: Theme.of(context).dividerColor,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(2),
+                    child: SizedBox(
+                      width: 41,
+                      height: 246,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton.filledTonal(
+                            onPressed: () {
+                              widget.hide();
+                            },
+                            icon: const Icon(Icons.close_rounded),
+                          ),
+                          const Expanded(
+                            child: RotatedBox(
+                              quarterTurns: 1,
+                              child: Center(
+                                child: Text(
+                                  "Advertisement",
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ]),
+              ),
+            ),
+          )
+        : const SizedBox.shrink();
   }
 }
