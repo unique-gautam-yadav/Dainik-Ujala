@@ -2,11 +2,11 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:dainik_ujala/Backend/models.dart';
+import 'package:dainik_ujala/Views/web_brouser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class DetailPage extends StatefulWidget {
@@ -109,6 +109,7 @@ class _DetailPageState extends State<DetailPage>
     align-items: center;
     justify-content: center;
   }
+  
 
 </style>
 """;
@@ -127,9 +128,14 @@ class _DetailPageState extends State<DetailPage>
   }
 
   Future<bool> _handleUrlTap(String u) async {
-    Uri url = Uri.parse(u);
-
-    return await launchUrl(url);
+    // Uri url = Uri.parse(u);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebBrouser(url: u),
+      ),
+    );
+    return true;
   }
 
   late WebViewController controller;
@@ -191,7 +197,13 @@ class _DetailPageState extends State<DetailPage>
 
       <style>
 
-        .cont img{
+        .cont img {
+          width: calc(100% - 50px);
+          padding: 25px;
+          object-fit: scale-down;
+        }
+
+        figure {
           width: calc(100% - 50px);
           padding: 25px;
           object-fit: scale-down;
@@ -414,7 +426,7 @@ class _DetailPageBannerState extends State<DetailPageBanner> {
         precacheImage(const AssetImage("assets/images/advt.jpeg"), context)
             .then(
           (value) {
-            widget.show();
+            // widget.show();
           },
         );
       });
